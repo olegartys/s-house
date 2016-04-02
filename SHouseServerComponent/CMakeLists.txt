@@ -18,4 +18,15 @@ add_subdirectory(MessagePacket)
 add_subdirectory(DataStoragePacket)
 
 # Main output artefact. [now for TEST]
-add_executable(SHouseServerComponent main.cpp)
+add_executable(SHouseServerComponent main.cpp main.cpp)
+
+# Link internal packets (libraries) to main artefact.
+target_link_libraries(SHouseServerComponent DataStoragePacket)
+target_link_libraries(SHouseServerComponent MessagePacket)
+target_link_libraries(SHouseServerComponent QueryAnalyzingPacket)
+
+# Add external libraries to Main executable artefact.
+target_link_libraries(SHouseServerComponent jsoncpp)
+target_link_libraries(SHouseServerComponent sqlpp-mysql)
+target_link_libraries(SHouseServerComponent mysqlclient)
+

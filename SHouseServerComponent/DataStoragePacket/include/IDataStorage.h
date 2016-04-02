@@ -11,6 +11,8 @@
 #include <sqlpp11/sqlpp11.h>
 #include <sqlpp11/mysql/mysql.h>
 
+
+
 class IDataStorage {
 public:
 

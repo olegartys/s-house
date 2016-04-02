@@ -5,12 +5,20 @@
 #include <Message.h>
 
 Message::Message(const std::string &src) {
-    this->deserialize(src);
+    ISerializable::ReturnCode code = this->deserialize(src);
+    switch (code) {
+        case ISerializable::ReturnCode::DESERIALIZE_ERR:
+            break;
+
+        case ISerializable::ReturnCode::SUCCESS:
+            break;
+    }
 }
 
 
 std::string Message::serialize() const {
     Json::Value root;
+    root["kek"] = "kek";
     //JSon
     return std::string();
 }

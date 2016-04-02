@@ -12,9 +12,12 @@
 class DataStorage : public IDataStorage {
 public:
     DataStorage() = default;
-    DataStorage(DataStorage&) = delete;
 
-    ~DataStorage() =default;
+    // Prevent copy of the objects.
+    DataStorage(const DataStorage&) = delete;
+    DataStorage& operator= (const DataStorage&) = delete;
+
+    ~DataStorage() = default;
 
     int createConnectionWithSqlDB(std::string userName = "root", std::string password = "root", std::string DBname = "DataStorage") override;
 
@@ -40,9 +43,6 @@ private:
 
     int getData(std::string systemSensorName, std::string sensorType, std::string& currentState);
     int getSensorTypeAndSystemSensorName(std::string userSensorName, std::string& systemSensorName, std::string& sensorType);
-
-
-
 
 };
 
