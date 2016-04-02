@@ -1,0 +1,1 @@
+/home/olegartys/s-house/SHouseServerComponent/QueryAnalyzingPacket/CMakeFiles/QueryAnalyzingPacket.dir
