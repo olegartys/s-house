@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 project(SHouseServerComponent)
 
 # Set compilaton flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC")
 
 # Link with libraries
 link_directories(/usr/lib)
@@ -26,7 +26,7 @@ target_link_libraries(SHouseServerComponent MessagePacket)
 target_link_libraries(SHouseServerComponent QueryAnalyzingPacket)
 
 # Add external libraries to Main executable artefact.
-target_link_libraries(SHouseServerComponent jsoncpp)
+#target_link_libraries(SHouseServerComponent jsoncpp)
 target_link_libraries(SHouseServerComponent sqlpp-mysql)
 target_link_libraries(SHouseServerComponent mysqlclient)
 
