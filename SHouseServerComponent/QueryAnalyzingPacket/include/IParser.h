@@ -8,6 +8,7 @@
 #include <functional>
 #include "SensorInfo.h"
 
+//template <typename SensorContainer>
 class IParser {
 public:
     using OnSuccess = std::function<void(SensorInfo)>;

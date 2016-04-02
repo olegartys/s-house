@@ -1,7 +1,13 @@
-cmake_minimum_required(VERSION 3.3)
 project(QueryAnalyzingPacket)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# Set package sources
+set(SOURCE_FILES main.cpp src/QueryListener.cpp include/QueryListener.h include/IListener.h include/IParser.h include/SensorInfo.h include/SensorName.h include/QueryHandler.h include/IActor.h src/QueryHandler.cpp include/FunctionTraits.h src/QueryParser.cpp include/QueryParser.h include/IHandler.h include/Utils.h src/Utils.cpp)
 
-set(SOURCE_FILES main.cpp QueryListener.cpp QueryListener.h IListener.h IParser.h SensorInfo.h SensorName.h QueryHandler.h IActor.h QueryHandler.cpp FunctionTraits.h QueryParser.cpp QueryParser.h IHandler.h Utils.h Utils.cpp)
+# Create an executable for QueryAnalyzingPacket
 add_executable(QueryAnalyzingPacket ${SOURCE_FILES})
+
+# Set directory with include files
+target_include_directories(QueryAnalyzingPacket PUBLIC include/)
+
+# Link it with MessagePacket library
+target_link_libraries(QueryAnalyzingPacket LINK_PUBLIC MessagePacket)

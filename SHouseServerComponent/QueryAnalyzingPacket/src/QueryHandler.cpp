@@ -3,10 +3,11 @@
 //
 
 #include <iostream>
+#include <Message.h>
 #include "Utils.h"
 #include "QueryHandler.h"
 
-QueryHandler::QueryHandler(Ptr<IListener> listener, Ptr<IParser> parser, Ptr<IActor> actor): IHandler::listener(listener), IHandler::parser(parser), IHandler::actor(actor)
+QueryHandler::QueryHandler(Ptr<IListener> listener, Ptr<IParser> parser, Ptr<IActor> actor)
 {
     this->listener = listener;
     this->parser = parser;
@@ -24,9 +25,10 @@ void QueryHandler::startListen() {
 
 /*---------------------------------------------Listener callbacks-----------------------------------------------------*/
 void QueryHandler::onListenerNewMsg(std::string data) {
-    std::cout << data << std::endl;
-    this->parser->parse(data, std::bind(&QueryHandler::onParserSuccess, this, std::placeholders::_1),
-                        std::bind(&QueryHandler::onParserError, this, std::placeholders::_1));
+//    std::cout << data << std::endl;
+//    this->parser->parse(data, std::bind(&QueryHandler::onParserSuccess, this, std::placeholders::_1),
+//                        std::bind(&QueryHandler::onParserError, this, std::placeholders::_1));
+    Message msg(data);
 };
 
 
