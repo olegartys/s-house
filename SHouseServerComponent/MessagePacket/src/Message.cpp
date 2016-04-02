@@ -10,11 +10,13 @@ Message::Message(const std::string &src) {
 
 
 std::string Message::serialize() const {
-
+    Json::Value root;
+    //JSon
+    return std::string();
 }
 
 
 ISerializable::ReturnCode Message::deserialize(const std::string &src) {
-
+    return ISerializable::ReturnCode();
 }
 

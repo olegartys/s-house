@@ -9,5 +9,9 @@ add_executable(QueryAnalyzingPacket ${SOURCE_FILES})
 # Set directory with include files
 target_include_directories(QueryAnalyzingPacket PUBLIC include/)
 
+# Link with libraries
+link_directories(/usr/lib)
+link_directories(/usr/local/lib)
+
 # Link it with MessagePacket library
-target_link_libraries(QueryAnalyzingPacket LINK_PUBLIC MessagePacket)
+target_link_libraries(QueryAnalyzingPacket LINK_PUBLIC MessagePacket crafter)

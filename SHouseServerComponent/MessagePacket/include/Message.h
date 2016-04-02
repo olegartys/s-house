@@ -8,6 +8,8 @@
 
 #include <stddef.h>
 #include <string>
+#include <json/json.h>
+
 #include "ISerializable.h"
 
 class Message: public ISerializable {
