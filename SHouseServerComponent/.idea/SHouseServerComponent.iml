@@ -9,16 +9,28 @@
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/src/QueryListener.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/src/Utils.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/main.cpp" isTestSource="false" />
+<<<<<<< HEAD
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/IActor.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/FunctionTraits.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/QueryHandler.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/QueryParser.h" isTestSource="false" />
+=======
+      <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/QueryParser.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/QueryHandler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/FunctionTraits.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/IListener.h" isTestSource="false" />
+>>>>>>> ac9c62df0b2132feea466e7e8521595d05e707ed
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/SensorName.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/Utils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/SensorInfo.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/IParser.h" isTestSource="false" />
+<<<<<<< HEAD
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/IListener.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/IHandler.h" isTestSource="false" />
+=======
+      <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/IHandler.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/IActor.h" isTestSource="false" />
+>>>>>>> ac9c62df0b2132feea466e7e8521595d05e707ed
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/QueryListener.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/QueryAnalyzingPacket/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
@@ -27,6 +39,7 @@
     <orderEntry type="module-library">
       <library name="Header Search Paths">
         <CLASSES>
+<<<<<<< HEAD
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
           <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
           <root url="file:///usr/include" />
@@ -55,6 +68,19 @@
           <root url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/IHandler.h" />
           <root url="file://$MODULE_DIR$/QueryAnalyzingPacket/include/QueryListener.h" />
         </excluded>
+=======
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/local/include" />
+        </CLASSES>
+        <SOURCES>
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/5/include" />
+          <root url="file:///usr/include" />
+          <root url="file:///usr/local/include" />
+        </SOURCES>
+>>>>>>> ac9c62df0b2132feea466e7e8521595d05e707ed
       </library>
     </orderEntry>
   </component>
