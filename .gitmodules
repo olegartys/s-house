@@ -1,3 +1,12 @@
 [submodule "SHouseServerComponent/external/jsoncpp"]
 	path = SHouseServerComponent/external/jsoncpp
 	url = https://github.com/open-source-parsers/jsoncpp
+[submodule "SHouseServerComponent/external/sqlpp11/sqlpp11"]
+	path = SHouseServerComponent/external/sqlpp11/sqlpp11
+	url = https://github.com/rbock/sqlpp11.git
+[submodule "SHouseServerComponent/external/sqlpp11/sqlpp11-connector-mysql"]
+	path = SHouseServerComponent/external/sqlpp11/sqlpp11-connector-mysql
+	url = https://github.com/rbock/sqlpp11-connector-mysql.git
+[submodule "SHouseServerComponent/external/sqlpp11/date"]
+	path = SHouseServerComponent/external/sqlpp11/date
+	url = https://github.com/HowardHinnant/date.git
