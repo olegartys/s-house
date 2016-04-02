@@ -1,1 +1,0 @@
-/usr/bin/c++       CMakeFiles/QueryAnalyzingPacket.dir/main.o CMakeFiles/QueryAnalyzingPacket.dir/src/QueryListener.o CMakeFiles/QueryAnalyzingPacket.dir/src/QueryHandler.o CMakeFiles/QueryAnalyzingPacket.dir/src/QueryParser.o CMakeFiles/QueryAnalyzingPacket.dir/src/Utils.o  -o QueryAnalyzingPacket -rdynamic -lMessagePacket -lcrafter 
