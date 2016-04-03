@@ -25,6 +25,8 @@ public:
     using OnNewQueryCatchedCallbackType = std::function<void(std::string data)>;
     using OnErrorCatchedCallbackType    = std::function<void(std::string&& error)>;
 
+    virtual ~IListener() = default;
+
     /**
      * @brief On this method listening is started (interface doesn't specifies rather block or nonblock method it is).
      * @param Handler handler who will own this object. From him connection to the surrounded world can be accessed.

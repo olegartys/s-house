@@ -28,7 +28,20 @@ void QueryHandler::onListenerNewMsg(std::string data) {
 //    std::cout << data << std::endl;
 //    this->parser->parse(data, std::bind(&QueryHandler::onParserSuccess, this, std::placeholders::_1),
 //                        std::bind(&QueryHandler::onParserError, this, std::placeholders::_1));
-//    Message msg(data);
+    // Parse message
+    Message::ReturnCode res;
+    Message msg(data, res);
+    switch (res) {
+        // If message parsed successfully
+        case Message::ReturnCode::SUCCESS:
+
+            break;
+
+        // Get the wrong format or broken message
+        case Message::ReturnCode::DESERIALIZE_ERR:
+
+            break;
+    }
 };
 
 

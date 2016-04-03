@@ -21,6 +21,8 @@ class IHandler {
 public:
     template <typename T> using Ptr = std::shared_ptr<T>; // to make code shorter
 
+    virtual ~IHandler() = default;
+
     /**
      * @brief Here we start listening and delegate work with recieved data to workers.
      */
