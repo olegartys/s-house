@@ -70,6 +70,22 @@ IDataStorage::ReturnCode DataStorage::setStateByUserQuery(std::string userSensor
 
 IDataStorage::ReturnCode DataStorage::getState(std::string userSensorName, OnSuccessCallbackType, OnErrorCallbackType)
 {
+    std::string systemSensorName, sensorType;
+    auto funcReturn = getSensorTypeAndSystemSensorName(userSensorName, systemSensorName, sensorType);
+    if (funcReturn == ErrorCode::SUCCESS) {
+
+        std::string state;
+        auto getDataReturn = getData(systemSensorName, sensorType, state);
+        if (getDataReturn == ErrorCode::SUCCESS) {
+            // При удаче в колбэк передается строка с состоянием
+            /*
+             * OnSuccessCallbackType
+             */
+        } else if (true) {
+
+        }
+
+    }
     return ReturnCode::SUCCESS;
 }
 
@@ -86,13 +102,6 @@ IDataStorage::ReturnCode DataStorage::removeSensor() {
     return ReturnCode::SUCCESS;
 }
 
-
-/*
- *
- * ДАЛЬШЕ ПРИВАТНЫЕ МЕТОДЫ!
- *
- *
- */
 IDataStorage::ReturnCode DataStorage::getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& systemSensorName)
 {
 
@@ -100,7 +109,7 @@ IDataStorage::ReturnCode DataStorage::getSystemSensorNameByUserSensorName(std::s
     const auto tabMainTable  = DataDB::MainTable();
     std::string sSName;
     for (const auto& row : db->operator()(sqlpp::select(tabMainTable.systemSensorName).from(tabMainTable).
-                                                             where(tabMainTable.userSensorName == userSensorName))) {
+            where(tabMainTable.userSensorName == userSensorName))) {
         inc++;
         sSName  = row.systemSensorName;
     }
@@ -114,8 +123,17 @@ IDataStorage::ReturnCode DataStorage::getSystemSensorNameByUserSensorName(std::s
     }
 }
 
+
+
+/*
+ *
+ * ДАЛЬШЕ ПРИВАТНЫЕ МЕТОДЫ!
+ *
+ *
+ */
+
 IDataStorage::ErrorCode DataStorage::getSensorTypeAndSystemSensorName(std::string userSensorName, std::string &systemSensorName,
-                                                  std::string &sensorType) {
+                                                                      std::string &sensorType) {
     int inc = 0;
     const auto tabMainTable  = DataDB::MainTable();
     std::string sSName, sensType;
@@ -135,6 +153,7 @@ IDataStorage::ErrorCode DataStorage::getSensorTypeAndSystemSensorName(std::strin
         return ErrorCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB;
     }
 }
+
 
 IDataStorage::ErrorCode DataStorage::getData(std::string systemSensorName, std::string sensorType, std::string& currentState)
 {
