@@ -16,29 +16,20 @@
 class IDataStorage {
 public:
 
-    struct ReturnCode {
-        enum returnCode : int { SUCCESS = 0,
-                                THERE_ARE_NULLPTR_CALLBACKS,
-
-
-        };
+    enum class ReturnCode { SUCCESS=0,
+                            THERE_ARE_NULLPTR_CALLBACKS,
+                            THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB,
+                            NO_SUCH_USER_SENSOR_NAME_IN_DB
     };
 
-    struct ErrorCode  {
-        enum errorCode : int {  NO_SUCH_USER_SENSOR_NAME_IN_DB=1,
-                                THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB,
-                                CANNOT_CHANGE_MONITOR_TYPE_STATE
-        };
+    enum class ErrorCode {  SUCCESS=0,
+                            NO_SUCH_USER_SENSOR_NAME_IN_DB,
+                            THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB,
+                            THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB,
+                            CANNOT_CHANGE_MONITOR_TYPE_STATE,
+                            THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB
     };
 
-//    struct SensorType {
-//        enum sensorType : std::string {
-//            BINARY="BINARY",
-//            manyStatesType = "MANY_STATES_TYPE",
-//            monitorType = "MONITOR_TYPE"
-//
-//        };
-//    };
     struct SensorType {
         const std::string binaryType =  "BINARY_TYPE";
         const std::string manyStatesType = "MANY_STATES_TYPE";
@@ -46,7 +37,7 @@ public:
     };
 
     using OnStateChangedCallbackType = std::function<int()>;
-    using OnOldStateCallbackType = std::function<int(std::string stateIsOld)>;
+    using OnOldStateCallbackType = std::function<int()>;
 
     using OnSuccessCallbackType = std::function<int()>;
     using OnErrorCallbackType = std::function<int(std::string errorMsg)>;
@@ -56,23 +47,23 @@ public:
     /*
      * @brief Creating connection with database. It's first needed function.
      */
-    virtual int createConnectionWithSqlDB(std::string userName, std::string password, std::string DBname) =0;
+    virtual ReturnCode createConnectionWithSqlDB(std::string userName, std::string password, std::string DBname) =0;
 
     /*
      * @brief Change sensor's state by User query.
      */
-    virtual int setStateByUserQuery(std::string userSensorName, std::string newState, OnStateChangedCallbackType,
+    virtual ReturnCode setStateByUserQuery(std::string userSensorName, std::string newState, OnStateChangedCallbackType,
                                                                                       OnOldStateCallbackType ,
                                                                                       OnErrorCallbackType) =0;
     /*
      * @brief Get state,using UserSensorName.
      */
-    virtual int getState(std::string userSensorName, OnSuccessCallbackType, OnErrorCallbackType) =0;
+    virtual ReturnCode getState(std::string userSensorName, OnSuccessCallbackType, OnErrorCallbackType) =0;
 
     /*
      * @brief Change data on DB by Client query. (Client = FA).
      */
-    virtual int setStateByClientQuery(std::string systemSensorName, std::string sensorType,
+    virtual ReturnCode setStateByClientQuery(std::string systemSensorName, std::string sensorType,
                                                                     OnSuccessCallbackType,
                                                                     OnErrorCallbackType) =0;
 
@@ -83,11 +74,12 @@ public:
     /*
      * @brief Get System Sensor Name into link and return 0 at success or ErrorCode.
      */
-    virtual int getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& linkOnUserSystemName) = 0;
 
-    virtual int addSensor() =0;
+    virtual ReturnCode getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& SystemSensorName) = 0;
 
-    virtual int removeSensor() =0;
+    virtual ReturnCode addSensor() =0;
+
+    virtual ReturnCode removeSensor() =0;
 
 protected:
 
@@ -97,7 +89,6 @@ protected:
 
     std::shared_ptr<sqlpp::mysql::connection> db;
     SensorType sensorTypeConstants;
-    //ErrorCode errorCode;
 
 };
 

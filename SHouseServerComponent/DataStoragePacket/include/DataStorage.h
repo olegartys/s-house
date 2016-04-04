@@ -19,30 +19,30 @@ public:
 
     ~DataStorage() = default;
 
-    int createConnectionWithSqlDB(std::string userName = "root", std::string password = "root", std::string DBname = "DataStorage") override;
+    ReturnCode createConnectionWithSqlDB(std::string userName = "root", std::string password = "root", std::string DBname = "DataStorage") override;
 
-    int setStateByUserQuery(std::string userSensorName, std::string newState, OnStateChangedCallbackType,
+    ReturnCode setStateByUserQuery(std::string userSensorName, std::string newState, OnStateChangedCallbackType,
                                          OnOldStateCallbackType,
                                          OnErrorCallbackType) override;
 
 
-    int getState(std::string userSensorName, OnSuccessCallbackType, OnErrorCallbackType);
+    ReturnCode getState(std::string userSensorName, OnSuccessCallbackType, OnErrorCallbackType);
 
-    int setStateByClientQuery(std::string systemSensorName, std::string sensorType,
+    ReturnCode setStateByClientQuery(std::string systemSensorName, std::string sensorType,
                                       OnSuccessCallbackType,
                                       OnErrorCallbackType);
 
-    int getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& systemSensorName) override; // ???? НУЖНО ЛИ?
+    ReturnCode addSensor();
 
-    int addSensor();
+    ReturnCode removeSensor();
 
-    int removeSensor();
-
+    ReturnCode getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& systemSensorName);
 private:
     // getData  это аналог getState, необходимый для внутреннего получения состояния датчика
 
-    int getData(std::string systemSensorName, std::string sensorType, std::string& currentState);
-    int getSensorTypeAndSystemSensorName(std::string userSensorName, std::string& systemSensorName, std::string& sensorType);
+    ErrorCode getData(std::string systemSensorName, std::string sensorType, std::string& currentState);
+    ErrorCode getSensorTypeAndSystemSensorName(std::string userSensorName, std::string& systemSensorName, std::string& sensorType);
+     // ???? НУЖНО ЛИ?
 
 };
 

@@ -5,36 +5,16 @@
 #include "DataStorage.h"
 #include <iostream>
 
-int DataStorage::createConnectionWithSqlDB(std::string userName, std::string password, std::string DBname) {
+IDataStorage::ReturnCode   DataStorage::createConnectionWithSqlDB(std::string userName, std::string password, std::string DBname) {
     config->user = userName;
     config->password = password;
     config->database = DBname;
     config->debug = true;
     db = std::shared_ptr<sqlpp::mysql::connection>(new sqlpp::mysql::connection(config));
-    return 0;
+    return ReturnCode::SUCCESS ;
 }
 
-int DataStorage::getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& systemSensorName)
-{
-
-    int inc = 0;
-    const auto tabMainTable  = DataDB::MainTable();
-    std::string sSName;
-    for (const auto& row : db->operator()(sqlpp::select(tabMainTable.systemSensorName).from(tabMainTable).where(tabMainTable.userSensorName == userSensorName))) {
-        inc++;
-        sSName  = row.systemSensorName;
-    }
-    if (inc == 1) {
-        systemSensorName = sSName;
-        return 0;
-    } else if (inc == 0 ) {
-        return ErrorCode::NO_SUCH_USER_SENSOR_NAME_IN_DB;
-    } else if (inc > 1) {
-        return ErrorCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB;
-    }
-}
-
-int DataStorage::setStateByUserQuery(std::string userSensorName, std::string newState, OnStateChangedCallbackType onStateChangedCallbackType,
+IDataStorage::ReturnCode DataStorage::setStateByUserQuery(std::string userSensorName, std::string newState, OnStateChangedCallbackType onStateChangedCallbackType,
                                      OnOldStateCallbackType onOldStateCallbackType, OnErrorCallbackType onErrorCallbackType)
 {
     /*
@@ -50,9 +30,8 @@ int DataStorage::setStateByUserQuery(std::string userSensorName, std::string new
 
     const auto  tabMainTable = DataDB::MainTable();
 
-    int getSensTypeAndSysSensNameReturn;
     std::string systemSensorName, sensorType;
-    getSensTypeAndSysSensNameReturn = getSensorTypeAndSystemSensorName(userSensorName, systemSensorName, sensorType);
+    auto getSensTypeAndSysSensNameReturn = getSensorTypeAndSystemSensorName(userSensorName, systemSensorName, sensorType);
 
     if (getSensTypeAndSysSensNameReturn == ErrorCode::NO_SUCH_USER_SENSOR_NAME_IN_DB) {
         onErrorCallbackType("NO SUCH USER SENSOR NAME IN DATABASE");
@@ -60,54 +39,82 @@ int DataStorage::setStateByUserQuery(std::string userSensorName, std::string new
     } else if (getSensTypeAndSysSensNameReturn == ErrorCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB) {
         onErrorCallbackType("THERE ARE TOO MANY USER SENSOR NAMES IN DATABASE");
         return ReturnCode::SUCCESS;
-    } else if (getSensTypeAndSysSensNameReturn == 0) {
+    } else if (getSensTypeAndSysSensNameReturn == ErrorCode::SUCCESS) {
         // ДАЛЕЕ 3 ИСХОДА! 1 - ОШИБКА, 2 - СОСТОЯНИЕ ТАКОЕ ЖЕ, 3 - СОСТОЯНИЕ ОТЛИЧАЕТСЯ.
         std::string currentState;
-        int getDataReturn = -1;
         if (sensorType == sensorTypeConstants.monitorType) {
-            onErrorCallbackType("CAN'T CHANGE MONITOR TYPE CALLBACK");
+            onErrorCallbackType("CAN'T CHANGE MONITOR TYPE");
             return ReturnCode::SUCCESS;
         }
-        getDataReturn = getData(systemSensorName, sensorType, currentState);
+        auto getDataReturn = getData(systemSensorName, sensorType, currentState);
+        if (getDataReturn == ErrorCode::SUCCESS) {
+            if (currentState == newState) {
+//                CОСТОЯНИЕ ТАКОЕ ЖЕ
+                onOldStateCallbackType();
+                return ReturnCode::SUCCESS;
+            } else {
+//                СОСТОЯНИЕ ИЗМЕНИЛОСЬ
+                onStateChangedCallbackType();
+                return ReturnCode::SUCCESS;
+            }
+        } else if (getDataReturn == ErrorCode::THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB) {
+            onErrorCallbackType("THERE ARE TOO MANY SYSTEM SENSOR NAMES IN DB");
+            return ReturnCode::SUCCESS;
+        } else if (getDataReturn == ErrorCode::THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB) {
+            onErrorCallbackType("THERE ARE NOT SHUCH SYSTEM SENSOR NAMES IN DB");
+            return ReturnCode::SUCCESS;
+        }
     }
-    return 0;
+    return ReturnCode::SUCCESS;
 }
 
-int DataStorage::getState(std::string userSensorName, OnSuccessCallbackType, OnErrorCallbackType)
+IDataStorage::ReturnCode DataStorage::getState(std::string userSensorName, OnSuccessCallbackType, OnErrorCallbackType)
 {
-    return 0;
+    return ReturnCode::SUCCESS;
 }
 
-int DataStorage::setStateByClientQuery(std::string systemSensorName, std::string sensorType, OnSuccessCallbackType,
+IDataStorage::ReturnCode DataStorage::setStateByClientQuery(std::string systemSensorName, std::string sensorType, OnSuccessCallbackType,
                                        OnErrorCallbackType) {
-    return 0;
+    return ReturnCode::SUCCESS;
 }
 
-int DataStorage::addSensor() {
-    return 0;
+IDataStorage::ReturnCode DataStorage::addSensor() {
+    return ReturnCode::SUCCESS;
 }
 
-int DataStorage::removeSensor() {
-    return 0;
+IDataStorage::ReturnCode DataStorage::removeSensor() {
+    return ReturnCode::SUCCESS;
 }
 
-int DataStorage::getData(std::string systemSensorName, std::string sensorType, std::string& currentState)
+
+/*
+ *
+ * ДАЛЬШЕ ПРИВАТНЫЕ МЕТОДЫ!
+ *
+ *
+ */
+IDataStorage::ReturnCode DataStorage::getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& systemSensorName)
 {
 
     int inc = 0;
-    std::string data;
-        if (sensorType == sensorTypeConstants.binaryType) {
-            auto tabBinaryType = DataDB::BinaryType();
-            for (const auto& row : db->operator()(sqlpp::select(tabBinaryType.state).from(tabBinaryType).where(tabBinaryType.systemSensorName == systemSensorName))) {
-
-            }
-
-        }
-
-    return 0;
+    const auto tabMainTable  = DataDB::MainTable();
+    std::string sSName;
+    for (const auto& row : db->operator()(sqlpp::select(tabMainTable.systemSensorName).from(tabMainTable).
+                                                             where(tabMainTable.userSensorName == userSensorName))) {
+        inc++;
+        sSName  = row.systemSensorName;
+    }
+    if (inc == 1) {
+        systemSensorName = sSName;
+        return ReturnCode::SUCCESS;
+    } else if (inc == 0 ) {
+        return ReturnCode::NO_SUCH_USER_SENSOR_NAME_IN_DB;
+    } else if (inc > 1) {
+        return ReturnCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB;
+    }
 }
 
-int DataStorage::getSensorTypeAndSystemSensorName(std::string userSensorName, std::string &systemSensorName,
+IDataStorage::ErrorCode DataStorage::getSensorTypeAndSystemSensorName(std::string userSensorName, std::string &systemSensorName,
                                                   std::string &sensorType) {
     int inc = 0;
     const auto tabMainTable  = DataDB::MainTable();
@@ -121,12 +128,53 @@ int DataStorage::getSensorTypeAndSystemSensorName(std::string userSensorName, st
     if (inc == 1) {
         sensorType = sensType;
         systemSensorName = sSName;
-        return 0;
+        return ErrorCode::SUCCESS;
     } else if (inc == 0 ) {
         return ErrorCode::NO_SUCH_USER_SENSOR_NAME_IN_DB;
     } else if (inc > 1) {
         return ErrorCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB;
     }
+}
+
+IDataStorage::ErrorCode DataStorage::getData(std::string systemSensorName, std::string sensorType, std::string& currentState)
+{
+
+    int inc = 0;
+    std::string data;
+    if (sensorType == sensorTypeConstants.binaryType) {
+        auto tabBinaryType = DataDB::BinaryType();
+        int inc = 0;
+        for (const auto& row : db->operator()(sqlpp::select(tabBinaryType.state).from(tabBinaryType).
+                                             where(tabBinaryType.systemSensorName == systemSensorName))) {
+            data = row.state;
+            ++inc;
+        }
+        if (inc == 0) {
+            return ErrorCode::THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB;
+        } else if (inc > 1) {
+            return ErrorCode::THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB;
+        } else if (inc == 1) {
+            currentState = data;
+            return ErrorCode::SUCCESS;
+        }
+    } else if (sensorType == sensorTypeConstants.manyStatesType) {
+        auto tabManyStatesType = DataDB::ManyStatesType();
+        int inc = 0;
+        for (const auto& row : db->operator()(sqlpp::select(tabManyStatesType.state).from(tabManyStatesType).
+                where(tabManyStatesType.systemSensorName == systemSensorName))) {
+            data = row.state;
+            ++inc;
+        }
+        if (inc == 0) {
+            return ErrorCode::THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB;
+        } else if (inc > 1) {
+            return ErrorCode::THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB;
+        } else if (inc == 1) {
+            currentState = data;
+            return ErrorCode::SUCCESS;
+        }
+    }
+    return ErrorCode::SUCCESS;
 }
 
 
