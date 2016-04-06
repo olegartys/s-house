@@ -28,13 +28,15 @@ public:
 
     ReturnCode getState(std::string userSensorName, OnSuccessCallbackType, OnErrorCallbackType) override;
 
-    ReturnCode setStateByClientQuery(std::string systemSensorName, std::string sensorType,
+    ReturnCode setStateByClientQuery(std::string systemSensorName, std::string sensorType, std::string newState,
                                       OnSuccessCallbackType,
                                       OnErrorCallbackType);
 
     ReturnCode addSensor();
 
     ReturnCode removeSensor();
+
+    ReturnCode getFAid() {};
 
     ReturnCode getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& systemSensorName);
 private:

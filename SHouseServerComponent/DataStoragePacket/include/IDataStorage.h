@@ -29,7 +29,8 @@ public:
     enum class ReturnCode { SUCCESS=0,
                             THERE_ARE_NULLPTR_CALLBACKS,
                             THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB,
-                            NO_SUCH_USER_SENSOR_NAME_IN_DB
+                            NO_SUCH_USER_SENSOR_NAME_IN_DB,
+                            WRONG_CONFIG
     };
     /*
      * @brief Class ErrorCode is the return value for private and protected methods.
@@ -39,15 +40,16 @@ public:
                             THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB,
                             THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB,
                             CANNOT_CHANGE_MONITOR_TYPE_STATE,
-                            THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB
-    };
+                            THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB,
+                            EXCEPTION_ERROR
+    }
     /*
      * @brief Struct SensorType has 3 std::string constants with types of Sensors: BINARY_TYPE, MANY_STATES_TYPE, MONITOR_TYPE.
      */
     struct SensorType {
-        const std::string binaryType =  "BINARY_TYPE";
-        const std::string manyStatesType = "MANY_STATES_TYPE";
-        const std::string monitorType = "MONITOR_TYPE";
+        const std::string binaryType =  "BinaryType";
+        const std::string manyStatesType = "ManyStatesType";
+        const std::string monitorType = "MonitorType";
     };
 
     /*
@@ -56,7 +58,7 @@ public:
     using OnStateChangedCallbackType = std::function<int()>;
     using OnOldStateCallbackType = std::function<int()>;
 // QUERY ID??????
-    using OnSuccessCallbackType = std::function<int(std::string queryId, std::string data)>;
+    using OnSuccessCallbackType = std::function<int(std::string data)>;
     using OnErrorCallbackType = std::function<int(std::string errorMsg)>;
 
     virtual ~IDataStorage() = default;
@@ -97,10 +99,11 @@ public:
      * It return ReturnCode and has next parameters:
      * @param[in] systemSensorName - std::string with System Sensor Name.
      * @param[in] sensorType - std::string with type of sensor.
+     * @param[in] newState - std::string with new state.
      * @param[in] OnSuccessCallbackType - callback which is used if state is changed without errors.
      * @param[in] OnErrorCallBackType - callback which is used when any error happened.
      */
-    virtual ReturnCode setStateByClientQuery(std::string systemSensorName, std::string sensorType,
+    virtual ReturnCode setStateByClientQuery(std::string systemSensorName, std::string sensorType, std::string newState,
                                                                     OnSuccessCallbackType,
                                                                     OnErrorCallbackType) =0;
 
@@ -116,6 +119,8 @@ public:
     virtual ReturnCode addSensor() =0;
 
     virtual ReturnCode removeSensor() =0;
+
+    virtual ReturnCode  getFAid() =0;
 
 protected:
 
