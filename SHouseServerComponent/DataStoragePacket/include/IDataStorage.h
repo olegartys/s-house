@@ -30,7 +30,10 @@ public:
                             THERE_ARE_NULLPTR_CALLBACKS,
                             THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB,
                             NO_SUCH_USER_SENSOR_NAME_IN_DB,
-                            WRONG_CONFIG
+                            WRONG_CONFIG,
+                            EXCEPTION_ERROR,
+                            THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB,
+                            THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAME_IN_DB
     };
     /*
      * @brief Class ErrorCode is the return value for private and protected methods.
@@ -42,7 +45,7 @@ public:
                             CANNOT_CHANGE_MONITOR_TYPE_STATE,
                             THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB,
                             EXCEPTION_ERROR
-    }
+    };
     /*
      * @brief Struct SensorType has 3 std::string constants with types of Sensors: BINARY_TYPE, MANY_STATES_TYPE, MONITOR_TYPE.
      */
@@ -50,6 +53,13 @@ public:
         const std::string binaryType =  "BinaryType";
         const std::string manyStatesType = "ManyStatesType";
         const std::string monitorType = "MonitorType";
+    };
+    /*
+     * @brief Struct BinaryTypeStates has 2 std::string constants with states for Binary Type Sensor: ON, OFF.
+     */
+    struct BinaryTypeStates {
+        const std::string on = "ON";
+        const std::string off = "OFF";
     };
 
     /*
@@ -69,7 +79,8 @@ public:
      * @param[in] userName - std::string with name of mysql User.
      * @param[in] password - std::string with user's mysql password.
      * @param[in] DBname - std::string with name of using DataBase.
-     * @return
+     * @return ReturnCode - Enum class ReturnCode.
+     * It return ReturnCode::Success if config is right or return WRONG_CONFIG if config iw wrong.
      */
     virtual ReturnCode createConnectionWithSqlDB(std::string userName, std::string password, std::string DBname) =0;
 
@@ -81,6 +92,9 @@ public:
      *  @param[in] OnStateChangedCallbackType - callback which is used when state of sensor changed.
      *  @param[in] OnOldStateCallbackType - callback which is used when state of sensor changed.
      *  @param[in] OnErrorCallbackType - callback which is used when any error happened.
+     *
+     *  It return ReturnCode::THERE_ARE_NULL_PTR_CALLBACKS if there 1 or more nullptr callback.
+     *  In other way it return ReturnCode::SUCCESS.
      */
     virtual ReturnCode setStateByUserQuery(std::string userSensorName, std::string newState, OnStateChangedCallbackType,
                                                                                       OnOldStateCallbackType ,
@@ -112,6 +126,9 @@ public:
      * It return ReturnCode and has next parameters:
      * @param[in]  userSensorName - std::string with User Sensor Name, which is used for finding System Sensor Name in DB.
      * @param[in]  systemSensorName - std::string& - reference on system sensor name in which will be recorded value.
+     * It return ReturnCode::NO_SUCH_USER_SENSOR_NAME if there are not such User sensor names in db.
+     * It return ReturnCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB if there are more than 1 such User sensor name.
+     * In other way it return ReturnCode::SUCCESS.
      */
 
     virtual ReturnCode getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& systemSensorName) = 0;
@@ -119,8 +136,10 @@ public:
     virtual ReturnCode addSensor() =0;
 
     virtual ReturnCode removeSensor() =0;
-
-    virtual ReturnCode  getFAid() =0;
+    /*
+     * Данный тип принимает UserSensorName, т.к. в таком случае ему не нужно узнавать тип датчика.
+     */
+    virtual ReturnCode  getFAid(std::string userSensorName, std::string& FAid) =0;
 
 protected:
 
@@ -138,7 +157,3 @@ protected:
 };
 
 #endif //SHOUSEDATASTORAGE_IDATASTORAGE_H
-
-// TODO Изменить прототип onSuccess!
-
-// TODO ОБСУДИТЬ QUERY ID!
