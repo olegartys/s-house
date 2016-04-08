@@ -6,10 +6,6 @@
 #include <iostream>
 
 
-std::string Message::deprecatedSensorName = "OXi71aEFol";
-std::string Message::deprecatedDataContainment = "8co1GSDXhR";
-
-
 Message::Message(const std::string &src, ReturnCode& res) {
     res = this->deserialize(src);
 }
@@ -28,6 +24,7 @@ std::string Message::serialize(bool styled) const {
 
 
 Message::ReturnCode Message::deserialize(const std::string &src) {
+
     ReturnCode returnCode = ReturnCode::SUCCESS;
 
     try {

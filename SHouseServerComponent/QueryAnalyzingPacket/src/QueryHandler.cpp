@@ -16,11 +16,11 @@ QueryHandler::QueryHandler(Ptr<IListener> listener, Ptr<IParser> parser, Ptr<IAc
 
 
 void QueryHandler::startListen() {
-    int res = listener->listen(std::bind(&QueryHandler::onListenerNewMsg, this, std::placeholders::_1),
-                               std::bind(&QueryHandler::onListenerError, this, std::placeholders::_1));
-    if (res < 0) {
-        // Error
-    }
+//    int res = listener->listen(std::bind(&QueryHandler::onListenerNewMsg, this, std::placeholders::_1),
+//                               std::bind(&QueryHandler::onListenerError, this, std::placeholders::_1));
+//    if (res < 0) {
+//        // Error
+//    }
 }
 
 /*---------------------------------------------Listener callbacks-----------------------------------------------------*/
@@ -37,7 +37,7 @@ void QueryHandler::onListenerNewMsg(std::string data) {
 
             break;
 
-        // Get the wrong format or broken message
+            // Get the wrong format or broken message
         case Message::ReturnCode::DESERIALIZE_ERR:
 
             break;
@@ -50,17 +50,6 @@ void QueryHandler::onListenerError(std::string&& error) {
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
 
-
-/*---------------------------------------------Parser callbacks-------------------------------------------------------*/
-void QueryHandler::onParserSuccess(SensorInfo sensorInfo) {
-    std::cout << sensorInfo << std::endl;
-}
-
-
-void QueryHandler::onParserError(std::string&& error) {
-    std::cout << error << std::endl;
-}
-/*--------------------------------------------------------------------------------------------------------------------*/
 
 
 IHandler::Ptr<IListener> QueryHandler::getListener() {

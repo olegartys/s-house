@@ -5,8 +5,30 @@
 #ifndef QUERYANALYZINGPACKET_IACTOR_H
 #define QUERYANALYZINGPACKET_IACTOR_H
 
+#include <Message.h>
+#include <functional>
+#include "../../DataStoragePacket/include/IDataStorage.h"
+
 class IActor {
 public:
+
+    using OnSuccessCallbackType  = std::function<void(std::string data)>;
+    using OnErrorCallbackType    = std::function<void(std::string error)>;
+
+    virtual ~IActor() = default;
+
+    enum class ReturnCode: int {
+        SUCCESS,
+        NULL_CALLBACK,
+        NOT_INIT
+    };
+
+    virtual ReturnCode init(const std::shared_ptr<IDataStorage>, OnSuccessCallbackType, OnErrorCallbackType) = 0;
+
+    virtual ReturnCode commit(const Message&) = 0;
+
+protected:
+    bool _is_initialized = false;
 
 };
 

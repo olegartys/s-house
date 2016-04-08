@@ -32,11 +32,6 @@ private:
     void onListenerNewMsg(std::string data);
     void onListenerError(std::string&& error);
 
-
-    // Callback for IParser
-    void onParserSuccess(SensorInfo sensorInfo);
-    void onParserError(std::string&& error);
-
 };
 
 #endif //QUERYANALYZINGPACKET_IQUERYHANDLER_H

@@ -14,11 +14,17 @@
  */
 class QueryListener : public IListener {
 public:
-    virtual int listen(OnNewQueryCatchedCallbackType type,
-                       OnErrorCatchedCallbackType callbackType,
-                       const IHandler* handler = nullptr) override;
+
+    virtual ReturnCode init(OnNewQueryCatchedCallbackType type, OnErrorCatchedCallbackType callbackType,
+                            const IHandler *iHandler) override;
+
+    virtual ReturnCode listen() override;
 
     virtual const IHandler* getHandler() override;
+
+private:
+    OnNewQueryCatchedCallbackType onNew;
+    OnErrorCatchedCallbackType onError;
 
 };
 

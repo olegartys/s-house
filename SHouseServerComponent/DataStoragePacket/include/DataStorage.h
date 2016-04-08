@@ -41,6 +41,7 @@ public:
     ReturnCode getFAid(std::string userSensorName, std::string& FAid) override;
 
     ReturnCode getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& systemSensorName) override;
+
 private:
     // getData  это аналог getState, необходимый для внутреннего получения состояния датчика
     /*

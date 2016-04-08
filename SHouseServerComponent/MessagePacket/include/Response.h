@@ -1,0 +1,14 @@
+//
+// Created by olegartys on 08.04.16.
+//
+
+#ifndef SHOUSESERVERCOMPONENT_RESPONSE_H
+#define SHOUSESERVERCOMPONENT_RESPONSE_H
+
+
+class Response {
+
+};
+
+
+#endif //SHOUSESERVERCOMPONENT_RESPONSE_H
