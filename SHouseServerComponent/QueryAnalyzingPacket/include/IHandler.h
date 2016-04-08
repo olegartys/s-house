@@ -7,7 +7,6 @@
 
 #include <memory>
 #include "IActor.h"
-#include "IParser.h"
 #include "IListener.h"
 
 class IListener;
@@ -34,11 +33,6 @@ public:
     virtual Ptr<IListener> getListener() = 0;
 
     /**
-     * @brief This method should return parser object.
-     */
-    virtual Ptr<IParser> getParser() = 0;
-
-    /**
      * @brief This method should return actor object.
      */
     virtual Ptr<IActor> getActor() = 0;
@@ -51,7 +45,6 @@ public:
 protected:
     // Workers
     Ptr<IListener> listener;
-    Ptr<IParser> parser;
     Ptr<IActor> actor;
     Ptr<IDataStorage> storage;
 

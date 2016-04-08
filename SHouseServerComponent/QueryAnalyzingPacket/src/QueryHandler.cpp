@@ -7,10 +7,9 @@
 #include "Utils.h"
 #include "QueryHandler.h"
 
-QueryHandler::QueryHandler(Ptr<IListener> listener, Ptr<IParser> parser, Ptr<IActor> actor, Ptr<IDataStorage> storage)
+QueryHandler::QueryHandler(Ptr<IListener> listener, Ptr<IActor> actor, Ptr<IDataStorage> storage)
 {
     this->listener = listener;
-    this->parser = parser;
     this->actor = actor;
     this->storage = storage;
 }
@@ -57,9 +56,6 @@ IHandler::Ptr<IListener> QueryHandler::getListener() {
     return listener;
 }
 
-IHandler::Ptr<IParser> QueryHandler::getParser() {
-    return parser;
-}
 
 IHandler::Ptr<IActor> QueryHandler::getActor() {
     return actor;

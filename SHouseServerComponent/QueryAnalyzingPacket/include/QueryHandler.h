@@ -7,7 +7,6 @@
 
 #include <memory>
 #include "IListener.h"
-#include "IParser.h"
 #include "IActor.h"
 #include "FunctionTraits.h"
 #include "IHandler.h"
@@ -19,11 +18,10 @@
 class QueryHandler : public IHandler {
 public:
 
-    explicit QueryHandler(Ptr<IListener> listener, Ptr<IParser> parser, Ptr<IActor> actor, Ptr<IDataStorage> storage);
+    explicit QueryHandler(Ptr<IListener> listener, Ptr<IActor> actor, Ptr<IDataStorage> storage);
 
     virtual void startListen() override;
 
-    virtual Ptr <IParser> getParser() override;
     virtual Ptr <IActor> getActor()  override;
     virtual Ptr <IListener> getListener() override;
     virtual Ptr<IDataStorage> getStorage() override;
