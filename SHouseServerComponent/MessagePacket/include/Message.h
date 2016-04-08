@@ -15,8 +15,7 @@
 /**
  * This class describes a Message that would be transfered between different components of a system.
  */
-class Message: public ISerializable {
-public:
+struct Message: public ISerializable {
 
     /**
      * This enumeration describes possible query types that can be treated.

@@ -6,7 +6,22 @@
 #define SHOUSESERVERCOMPONENT_RESPONSE_H
 
 
-class Response {
+#include "ISerializable.h"
+
+struct Response: public ISerializable {
+
+    Response(const std::string& src, ReturnCode& res);
+
+    virtual ReturnCode deserialize(const std::string& src) override;
+    virtual std::string serialize(bool styled) const override;
+
+    struct StatusCode {
+        enum { SUCCESS };
+    };
+
+    int id;
+    int statusCode;
+    std::string data;
 
 };
 
