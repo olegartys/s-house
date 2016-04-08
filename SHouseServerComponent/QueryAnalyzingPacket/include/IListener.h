@@ -48,6 +48,8 @@ public:
      */
     virtual ReturnCode listen() = 0;
 
+    virtual ReturnCode sendResponse(const Response&) = 0;
+
     /**
      * @brief this method returns handler associated with the listener.
      */

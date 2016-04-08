@@ -15,6 +15,8 @@
 class QueryListener : public IListener {
 public:
 
+    virtual ReturnCode sendResponse(const Response &response);
+
     virtual ReturnCode init(OnNewQueryCatchedCallbackType type, OnErrorCatchedCallbackType callbackType,
                             const IHandler *iHandler) override;
 

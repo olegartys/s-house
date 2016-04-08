@@ -30,8 +30,9 @@ IActor::ReturnCode QueryActor::commit(const Message &message) {
 
     switch (message.queryType) {
         case Message::QueryType::GET_STATE: //TODO handle return value
-            storage->getState(message.sensorName, std::bind(&QueryActor::onGetStateSuccess, this, message.id, std::placeholders::_1),
-                              std::bind(&QueryActor::onGetStateError, this, std::placeholders::_1));
+//            storage->getState(message.sensorName, std::bind(&QueryActor::onGetStateSuccess, this, message.id, std::placeholders::_1),
+//                              std::bind(&QueryActor::onGetStateError, this, std::placeholders::_1));
+            onGetStateSuccess(message.id, "BigData");
             break;
 
         case Message::QueryType::SET_STATE:

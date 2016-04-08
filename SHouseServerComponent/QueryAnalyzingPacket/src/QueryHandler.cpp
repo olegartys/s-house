@@ -84,7 +84,7 @@ void QueryHandler::onListenerError(std::string&& error) {
 
 /*---------------------------------------------Actor callbacks--------------------------------------------------------*/
 void QueryHandler::onTransactionSuccess(Response msg) {
-
+    listener->sendResponse(msg);
 }
 
 void QueryHandler::onTransactionError(std::string err) {

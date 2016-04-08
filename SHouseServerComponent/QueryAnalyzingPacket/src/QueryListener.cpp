@@ -2,6 +2,7 @@
 // Created by olegartys on 27.03.16.
 //
 
+#include <iostream>
 #include "QueryListener.h"
 
 IListener::ReturnCode QueryListener::init(IListener::OnNewQueryCatchedCallbackType onNew,
@@ -29,7 +30,14 @@ QueryListener::ReturnCode QueryListener::listen() {
         return ReturnCode::NOT_INIT;
     }
 
-    onNew("onNewTest");
+    std::string s("{\n"
+                          "  \"id\": 1,\n"
+                          "  \"query_type\": 0,\n"
+                          "  \"sensor_type\": 0,\n"
+                          "  \"sensor_name\": \"kek\",\n"
+                          "  \"data\": \"kek\"\n"
+                          "}");
+    onNew(s);
     onError("onErrorTest");
 
     return ReturnCode::SUCCESS ;
@@ -40,3 +48,7 @@ const IHandler* QueryListener::getHandler() {
 }
 
 
+IListener::ReturnCode QueryListener::sendResponse(const Response &response) {
+    std::cout << "[Response] " << response.serialize(true);
+    return ReturnCode::SUCCESS ;
+}
