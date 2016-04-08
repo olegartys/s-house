@@ -22,6 +22,6 @@ mysqldump -u root -p DataStorage < DataStorage.sql
 Затем ввести пароль: root .
 
 Для копирования данных со своей машины:
-mysqldump -u root -p DataStorage < DataStorage.sql
+mysqldump -u root -p DataStorage > DataStorage.sql
 Затем ввести пароль: root.
 
