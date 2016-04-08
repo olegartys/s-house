@@ -19,8 +19,11 @@ public:
 private:
     OnSuccessCallbackType onSuccess;
     OnErrorCallbackType onError;
-    
+
     std::shared_ptr<IDataStorage> storage;
+
+    int onGetStateSuccess(int id, std::string data);
+    int onGetStateError(std::string error);
 
 };
 

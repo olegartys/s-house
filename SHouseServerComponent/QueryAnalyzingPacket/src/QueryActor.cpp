@@ -29,8 +29,9 @@ IActor::ReturnCode QueryActor::commit(const Message &message) {
     }
 
     switch (message.queryType) {
-        case Message::QueryType::GET_STATE:
-            //storage->getState(message.sensorName, )
+        case Message::QueryType::GET_STATE: //TODO handle return value
+            storage->getState(message.sensorName, std::bind(&QueryActor::onGetStateSuccess, this, message.id, std::placeholders::_1),
+                              std::bind(&QueryActor::onGetStateError, this, std::placeholders::_1));
             break;
 
         case Message::QueryType::SET_STATE:
@@ -44,4 +45,17 @@ IActor::ReturnCode QueryActor::commit(const Message &message) {
     }
 
     return ReturnCode::SUCCESS;
+}
+
+int QueryActor::onGetStateSuccess(int id, std::string data) {
+    Response resp;
+    resp.id = id;
+    resp.data = data;
+    resp.statusCode = Response::StatusCode::SUCCESS;
+
+    onSuccess(resp);
+}
+
+int QueryActor::onGetStateError(std::string error) {
+    onError(error);
 }

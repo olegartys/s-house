@@ -16,11 +16,42 @@ QueryHandler::QueryHandler(Ptr<IListener> listener, Ptr<IActor> actor, Ptr<IData
 
 
 void QueryHandler::startListen() {
-//    int res = listener->listen(std::bind(&QueryHandler::onListenerNewMsg, this, std::placeholders::_1),
-//                               std::bind(&QueryHandler::onListenerError, this, std::placeholders::_1));
-//    if (res < 0) {
-//        // Error
-//    }
+    // Init listener
+    IListener::ReturnCode res = listener->init(std::bind(&QueryHandler::onListenerNewMsg, this, std::placeholders::_1),
+                           std::bind(&QueryHandler::onListenerError, this, std::placeholders::_1));
+
+    switch (res) {
+
+        case IListener::ReturnCode::SUCCESS:
+            break;
+
+        case IListener::ReturnCode::NULL_CALLBACK:
+            break;
+
+        case IListener::ReturnCode::NOT_INIT:
+            break;
+    }
+
+    // Init actor
+    IActor::ReturnCode res1 = actor->init(storage, std::bind(&QueryHandler::onTransactionSuccess, this, std::placeholders::_1),
+                                          std::bind(&QueryHandler::onTransactionError, this, std::placeholders::_1));
+
+    switch (res1) {
+
+        case IActor::ReturnCode::SUCCESS:
+            break;
+
+        case IActor::ReturnCode::NULL_CALLBACK:
+            break;
+
+        case IActor::ReturnCode::NOT_INIT:
+            break;
+
+        case IActor::ReturnCode::NULL_STORAGE:
+            break;
+    }
+
+    listener->listen();
 }
 
 /*---------------------------------------------Listener callbacks-----------------------------------------------------*/
@@ -34,10 +65,11 @@ void QueryHandler::onListenerNewMsg(std::string data) {
     switch (res) {
         // If message parsed successfully
         case Message::ReturnCode::SUCCESS:
+            actor->commit(msg); //TODO check return code
 
             break;
 
-            // Get the wrong format or broken message
+        // Get the wrong format or broken message
         case Message::ReturnCode::DESERIALIZE_ERR:
 
             break;
@@ -50,6 +82,16 @@ void QueryHandler::onListenerError(std::string&& error) {
 }
 /*--------------------------------------------------------------------------------------------------------------------*/
 
+/*---------------------------------------------Actor callbacks--------------------------------------------------------*/
+void QueryHandler::onTransactionSuccess(Response msg) {
+
+}
+
+void QueryHandler::onTransactionError(std::string err) {
+
+}
+
+/*--------------------------------------------------------------------------------------------------------------------*/
 
 
 IHandler::Ptr<IListener> QueryHandler::getListener() {
@@ -64,3 +106,5 @@ IHandler::Ptr<IActor> QueryHandler::getActor() {
 IHandler::Ptr<IDataStorage> QueryHandler::getStorage() {
     return storage;
 }
+
+

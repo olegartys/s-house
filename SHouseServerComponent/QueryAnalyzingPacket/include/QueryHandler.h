@@ -22,14 +22,18 @@ public:
 
     virtual void startListen() override;
 
-    virtual Ptr <IActor> getActor()  override;
-    virtual Ptr <IListener> getListener() override;
+    virtual Ptr<IActor> getActor()  override;
+    virtual Ptr<IListener> getListener() override;
     virtual Ptr<IDataStorage> getStorage() override;
 
 private:
     // Callbacks for IListener
     void onListenerNewMsg(std::string data);
     void onListenerError(std::string&& error);
+
+    // Actor callbacks
+    void onTransactionSuccess(Response msg);
+    void onTransactionError(std::string err);
 
 };
 

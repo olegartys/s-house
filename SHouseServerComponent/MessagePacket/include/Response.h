@@ -10,6 +10,7 @@
 
 struct Response: public ISerializable {
 
+    Response() = default;
     Response(const std::string& src, ReturnCode& res);
 
     virtual ReturnCode deserialize(const std::string& src) override;

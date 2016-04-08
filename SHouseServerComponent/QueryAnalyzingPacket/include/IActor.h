@@ -14,7 +14,7 @@ class IActor {
 public:
 
     using OnSuccessCallbackType  = std::function<void(Response data)>;
-    using OnErrorCallbackType    = std::function<void(Response error)>;
+    using OnErrorCallbackType    = std::function<void(std::string error)>;
 
     virtual ~IActor() = default;
 
