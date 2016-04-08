@@ -6,8 +6,9 @@
 	target_link_libraries(SHouseDataStorage sqlpp-mysql)
 	target_link_libraries(SHouseDataStorage mysqlclient)
 
-Для создания базы данных необходимы: Mysql-5.6, mysql-server.
+Для создания базы данных необходимы: mysql-client, mysql-server.
 
+При установке mysql-server Установить пользователя: root и пароль для него: root
 
 mysqldump -u root -p --no-data DataStorage > DataStorage.sql
 
@@ -15,3 +16,12 @@ mysqldump -u root -p --no-data DataStorage > DataStorage.sql
 
 bash> ./../sqlpp11/sqlpp11/scripts/ddl2cpp DataStorage.sql ./DataDB DataDB
 Предворительно создается БД с необходимыми таблицами.
+
+Для копирования базы данных на свою машину необходимо ввести следующую команду:
+mysqldump -u root -p DataStorage < DataStorage.sql
+Затем ввести пароль: root .
+
+Для копирования данных со своей машины:
+mysqldump -u root -p DataStorage < DataStorage.sql
+Затем ввести пароль: root.
+

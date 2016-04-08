@@ -31,6 +31,16 @@ CREATE TABLE `BinaryType` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `BinaryType`
+--
+
+LOCK TABLES `BinaryType` WRITE;
+/*!40000 ALTER TABLE `BinaryType` DISABLE KEYS */;
+INSERT INTO `BinaryType` VALUES ('light1','light','fa1','ON');
+/*!40000 ALTER TABLE `BinaryType` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `MainTable`
 --
 
@@ -43,6 +53,16 @@ CREATE TABLE `MainTable` (
   `sensorType` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `MainTable`
+--
+
+LOCK TABLES `MainTable` WRITE;
+/*!40000 ALTER TABLE `MainTable` DISABLE KEYS */;
+INSERT INTO `MainTable` VALUES ('sas',NULL,NULL),('sas',NULL,NULL),('DDsas',NULL,NULL),('DDsssas',NULL,NULL),('kek',NULL,NULL),('kek','kek','kek'),('sos','sos','sos'),('MyLight','light1','BinaryType');
+/*!40000 ALTER TABLE `MainTable` ENABLE KEYS */;
+UNLOCK TABLES;
 
 --
 -- Table structure for table `ManyStatesType`
@@ -60,6 +80,15 @@ CREATE TABLE `ManyStatesType` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Dumping data for table `ManyStatesType`
+--
+
+LOCK TABLES `ManyStatesType` WRITE;
+/*!40000 ALTER TABLE `ManyStatesType` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ManyStatesType` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `MonitorType`
 --
 
@@ -73,6 +102,15 @@ CREATE TABLE `MonitorType` (
   `state` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `MonitorType`
+--
+
+LOCK TABLES `MonitorType` WRITE;
+/*!40000 ALTER TABLE `MonitorType` DISABLE KEYS */;
+/*!40000 ALTER TABLE `MonitorType` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -83,4 +121,4 @@ CREATE TABLE `MonitorType` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-04-02 12:50:59
+-- Dump completed on 2016-04-08  9:46:35
