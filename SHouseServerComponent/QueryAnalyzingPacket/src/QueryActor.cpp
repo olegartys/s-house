@@ -10,8 +10,13 @@ IActor::ReturnCode QueryActor::init(const std::shared_ptr<IDataStorage> storage,
         return ReturnCode::NULL_CALLBACK;
     }
 
+    if (storage == nullptr) {
+        return ReturnCode::NULL_STORAGE;
+    }
+
     this->onSuccess = onSuccess;
     this->onError = onError;
+    this->storage = storage;
 
     this->_is_initialized = true;
 
@@ -25,7 +30,7 @@ IActor::ReturnCode QueryActor::commit(const Message &message) {
 
     switch (message.queryType) {
         case Message::QueryType::GET_STATE:
-
+            //storage->getState(message.sensorName, )
             break;
 
         case Message::QueryType::SET_STATE:

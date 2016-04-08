@@ -19,6 +19,8 @@ public:
 private:
     OnSuccessCallbackType onSuccess;
     OnErrorCallbackType onError;
+    
+    std::shared_ptr<IDataStorage> storage;
 
 };
 

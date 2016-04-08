@@ -8,19 +8,21 @@
 #include <Message.h>
 #include <functional>
 #include "../../DataStoragePacket/include/IDataStorage.h"
+#include <Response.h>
 
 class IActor {
 public:
 
-    using OnSuccessCallbackType  = std::function<void(std::string data)>;
-    using OnErrorCallbackType    = std::function<void(std::string error)>;
+    using OnSuccessCallbackType  = std::function<void(Response data)>;
+    using OnErrorCallbackType    = std::function<void(Response error)>;
 
     virtual ~IActor() = default;
 
     enum class ReturnCode: int {
         SUCCESS,
         NULL_CALLBACK,
-        NOT_INIT
+        NOT_INIT,
+        NULL_STORAGE
     };
 
     virtual ReturnCode init(const std::shared_ptr<IDataStorage>, OnSuccessCallbackType, OnErrorCallbackType) = 0;

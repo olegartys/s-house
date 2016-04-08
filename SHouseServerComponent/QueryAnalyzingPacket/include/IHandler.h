@@ -43,11 +43,17 @@ public:
      */
     virtual Ptr<IActor> getActor() = 0;
 
+    /**
+    * @brief This method should return storage object.
+    */
+    virtual Ptr<IDataStorage> getStorage() = 0;
+
 protected:
     // Workers
     Ptr<IListener> listener;
     Ptr<IParser> parser;
     Ptr<IActor> actor;
+    Ptr<IDataStorage> storage;
 
 };
 
