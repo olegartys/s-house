@@ -32,6 +32,13 @@ ISerializable::ReturnCode Response::deserialize(const std::string &src) {
         }
         this->id = id;
 
+        // Get host
+        std::string host = root["host"].asString();
+        if (host == "") {
+            returnCode = ReturnCode::DESERIALIZE_ERR;
+        }
+        this->host = host;
+
         // Get status_code
         int statusCode = root["status_code"].asInt();
         if (id == -1) {

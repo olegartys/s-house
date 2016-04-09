@@ -21,6 +21,7 @@ struct Response: public ISerializable {
     };
 
     int id;
+    std::string host;
     int statusCode;
     std::string data;
 

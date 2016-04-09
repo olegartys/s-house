@@ -54,6 +54,11 @@ struct Message: public ISerializable {
      */
     int id;
 
+    /*
+     * From whom message was sent.
+     */
+    std::string host;
+
     /**
      * A type of the message.
      */

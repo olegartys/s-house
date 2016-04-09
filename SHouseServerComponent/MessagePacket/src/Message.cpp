@@ -40,6 +40,13 @@ Message::ReturnCode Message::deserialize(const std::string &src) {
         }
         this->id = id;
 
+        // Get host
+        std::string host = root["host"].asString();
+        if (host == "") {
+            returnCode = ReturnCode::DESERIALIZE_ERR;
+        }
+        this->host = host;
+
         // Get query_type
         int queryType = root["query_type"].asInt();
         if (queryType == QueryType::DEPRECATED_QUERY) {
