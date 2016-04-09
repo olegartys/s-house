@@ -48,6 +48,10 @@ public:
      */
     virtual ReturnCode listen() = 0;
 
+    /**
+     * @brief Sends a Response object as a Message answer.
+     * IMPORTANT: id of conforming Message should be equal to Responses.
+     */
     virtual ReturnCode sendResponse(const Response&) = 0;
 
     /**

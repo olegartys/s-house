@@ -8,7 +8,6 @@
 #include <string>
 #include <sstream>
 
-
-
+void LogD(std::string TAG, std::string ERR);
 
 #endif //QUERYANALYZINGPACKET_UTILS_H

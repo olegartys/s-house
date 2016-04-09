@@ -29,4 +29,5 @@ target_link_libraries(SHouseServerComponent QueryAnalyzingPacket)
 #target_link_libraries(SHouseServerComponent jsoncpp)
 target_link_libraries(SHouseServerComponent sqlpp-mysql)
 target_link_libraries(SHouseServerComponent mysqlclient)
+target_link_libraries(SHouseServerComponent event)
 
