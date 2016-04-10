@@ -4,12 +4,26 @@
 
 #include <iostream>
 #include <event2/buffer.h>
-#include <unistd.h>
 #include <thread>
 #include <Utils.h>
-#include "QueryListener.h"
+#include <QueryListener/QueryListener.h>
+#include <assert.h>
+#include <unistd.h>
 
-std::string QueryListener::TAG = "QueryListener";
+const std::string QueryListener::TAG = "QueryListener";
+
+QueryListener::QueryListener(std::string socketPath, std::string userAuthKey, std::string clientAuthKey) :
+        socketPath(socketPath), userAuthKey(userAuthKey), clientAuthKey(clientAuthKey) {
+
+    assert(userAuthKey != clientAuthKey);
+}
+
+
+QueryListener::~QueryListener() {
+    if (connListener) evconnlistener_free(connListener);
+    if (eventBase) event_base_free(eventBase);
+}
+
 
 IListener::ReturnCode QueryListener::init(IListener::OnNewQueryCatchedCallbackType onNew,
                                           IListener::OnErrorCatchedCallbackType onError, const IHandler *handler) {
@@ -30,12 +44,6 @@ IListener::ReturnCode QueryListener::init(IListener::OnNewQueryCatchedCallbackTy
     this->_is_initialized = true;
 
     return ReturnCode::SUCCESS;
-}
-
-
-QueryListener::~QueryListener() {
-    evconnlistener_free(connListener);
-    event_base_free(eventBase);
 }
 
 
@@ -76,7 +84,7 @@ int QueryListener::initMasterSocket() {
     }
 
     masterAddr.sun_family = AF_UNIX;
-    strcpy(masterAddr.sun_path, "/tmp/sock");
+    strcpy(masterAddr.sun_path, socketPath.c_str());
 
     // Init event base
     eventBase = event_base_new();
@@ -86,6 +94,7 @@ int QueryListener::initMasterSocket() {
     }
 
     // Create listener on a new connections
+    unlink(socketPath.c_str()); // delete socket if it exists
     connListener = evconnlistener_new_bind(eventBase, onAccept, (void*)this,
                                            (LEV_OPT_CLOSE_ON_FREE | LEV_OPT_REUSEABLE), -1,
                                            (sockaddr*)&masterAddr, sizeof(masterAddr));
@@ -108,7 +117,7 @@ void QueryListener::onAccept(evconnlistener *listener, evutil_socket_t fd, socka
     LogD(TAG, "Accepted new connection with fd=" + std::to_string(fd));
     // When a new connection caught, connect it with bufferevent
     event_base* base = evconnlistener_get_base(listener);
-    bufferevent* bufferevent = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE); // TODO: memory leak
+    bufferevent *bufferevent = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
 
     // Connect read, write and event callbacks to bufferevent of the connection
     bufferevent_setcb(bufferevent, onRead, onWrite, onEvent, arg);
@@ -130,10 +139,45 @@ void QueryListener::onRead(bufferevent *bufEvent, void *arg) {
 
     // Convert it to the string
     std::string data = evBufferToString(bufInput);
+    trim(data);
 
-    // Trigger callback
-    std::thread thr(_this->onNew, data);
-    thr.detach();
+    evutil_socket_t fd = bufferevent_getfd(bufEvent);
+
+    // Search for connection in the collection
+    auto connection = _this->connections.find(bufEvent);
+
+    // If connection contained in collection
+    if (connection != _this->connections.end()) {
+        // Trigger callback
+        std::thread thr(_this->onNew, data);
+        thr.detach();
+
+        // If not...
+    } else {
+
+        // if data equals to one of the keys
+        if (data == _this->userAuthKey || data == _this->clientAuthKey) {
+
+            // and if data NOT equals to the existing connection (to prevent twice connection)...
+            bool exists = false;
+            for (auto it: _this->connections) {
+                if (it.second->isKeyEqual(data)) {
+                    exists = true;
+                }
+            }
+
+            // ... so the authentication is over and we are adding new connection into collection
+            if (!exists) {
+                _this->connections[bufEvent] = SharedConnWrapper(new ConnectionWrapper(bufEvent, data));
+                // else just close it
+            } else {
+                evutil_closesocket(fd);
+            }
+            // close socket if received data is not equal to auth messages
+        } else {
+            evutil_closesocket(fd);
+        }
+    }
 
 }
 
@@ -144,7 +188,20 @@ void QueryListener::onWrite(bufferevent *bufEvent, void *arg) {
 
 
 void QueryListener::onEvent(bufferevent *bufEvent, short events, void *arg) {
-    LogD(TAG, "Event on master socket");
+
+    QueryListener *_this = static_cast<QueryListener *>(arg);
+    evutil_socket_t fd = bufferevent_getfd(bufEvent);
+
+    // If socket is closed - delete it from the collection
+    if (events & BEV_EVENT_EOF) {
+        LogD(TAG, "event: BEV_EVENT_EOF fd=" + std::to_string(fd));
+        _this->connections.erase(bufEvent);
+    }
+
+    if (events & BEV_EVENT_ERROR) {
+        LogD(TAG, "event: BEV_EVENT_ERROR fd=" + std::to_string(fd));
+    }
+
 }
 
 
@@ -157,3 +214,4 @@ std::string QueryListener::evBufferToString(evbuffer *pEvbuffer) {
     delete[] data;
     return res;
 }
+

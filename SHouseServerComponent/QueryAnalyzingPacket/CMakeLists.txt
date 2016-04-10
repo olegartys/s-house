@@ -1,7 +1,7 @@
 project(QueryAnalyzingPacket)
 
 # Set package sources
-set(SOURCE_FILES src/QueryListener.cpp include/QueryListener.h include/IListener.h include/QueryHandler.h include/IActor.h src/QueryHandler.cpp include/FunctionTraits.h include/IHandler.h include/Utils.h src/Utils.cpp src/QueryActor.cpp include/QueryActor.h src/QueryActor.cpp include/QueryActor.h src/QueryHandler.cpp)
+set(SOURCE_FILES src/QueryListener/QueryListener.cpp include/QueryListener/QueryListener.h include/IListener.h include/QueryHandler.h include/IActor.h src/QueryHandler.cpp include/FunctionTraits.h include/IHandler.h include/Utils.h src/Utils.cpp src/QueryActor.cpp include/QueryActor.h src/QueryActor.cpp include/QueryActor.h src/QueryHandler.cpp src/QueryListener/ConnectionWrapper.cpp include/QueryListener/ConnectionWrapper.h)
 
 # Create an executable for QueryAnalyzingPacket
 add_library(QueryAnalyzingPacket SHARED ${SOURCE_FILES})
