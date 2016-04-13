@@ -15,8 +15,7 @@
 /**
  * This class describes a Message that would be transfered between different components of a system.
  */
-class Message: public ISerializable {
-public:
+struct Message: public ISerializable {
 
     /**
      * This enumeration describes possible query types that can be treated.
@@ -47,13 +46,18 @@ public:
     Message(const std::string& src, ReturnCode& res);
 
     virtual std::string serialize(bool styled= false) const override;
+
     virtual ReturnCode deserialize(const std::string &src) override;
 
-protected:
     /**
      * An id of message.
      */
     int id;
+
+    /*
+     * From whom message was sent.
+     */
+    std::string host;
 
     /**
      * A type of the message.
@@ -75,11 +79,13 @@ protected:
      */
     std::string data;
 
-
-    static std::string deprecatedSensorName;
-    static std::string deprecatedDataContainment;
-
 };
+
+//    int getID()                 const { return id; }
+//    int getQueryType()          const { return queryType; }
+//    int getSensorType()         const { return sensorType; }
+//    std::string getSensorName() const { return sensorName; }
+//    std::string getData()       const { return data; }
 
 
 #endif //QUERYANALYZINGPACKET_MESSAGE_H

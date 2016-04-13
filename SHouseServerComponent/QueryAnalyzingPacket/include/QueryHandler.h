@@ -7,7 +7,6 @@
 
 #include <memory>
 #include "IListener.h"
-#include "IParser.h"
 #include "IActor.h"
 #include "FunctionTraits.h"
 #include "IHandler.h"
@@ -19,23 +18,22 @@
 class QueryHandler : public IHandler {
 public:
 
-    explicit QueryHandler(Ptr<IListener> listener, Ptr<IParser> parser, Ptr<IActor> actor);
+    explicit QueryHandler(Ptr<IListener> listener, Ptr<IActor> actor, Ptr<IDataStorage> storage);
 
     virtual void startListen() override;
 
-    virtual Ptr <IParser> getParser() override;
-    virtual Ptr <IActor> getActor()  override;
-    virtual Ptr <IListener> getListener() override;
+    virtual Ptr<IActor> getActor()  override;
+    virtual Ptr<IListener> getListener() override;
+    virtual Ptr<IDataStorage> getStorage() override;
 
 private:
     // Callbacks for IListener
     void onListenerNewMsg(std::string data);
     void onListenerError(std::string&& error);
 
-
-    // Callback for IParser
-    void onParserSuccess(SensorInfo sensorInfo);
-    void onParserError(std::string&& error);
+    // Actor callbacks
+    void onTransactionSuccess(Response msg);
+    void onTransactionError(std::string err);
 
 };
 

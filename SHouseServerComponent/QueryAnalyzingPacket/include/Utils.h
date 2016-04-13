@@ -6,14 +6,34 @@
 #define QUERYANALYZINGPACKET_UTILS_H
 
 #include <string>
-#include <sstream>
-#include "SensorInfo.h"
+#include <memory>
+#include <algorithm>
 
-std::string to_string(const SensorName& sensorName);
-std::ostream& operator<< (std::ostream& str, const SensorName& sensorName);
+/*
+ * Prints ERR message in std::cerr with TAG before it.
+ */
+void LogD(std::string TAG, std::string ERR);
 
-std::string to_string(const SensorInfo& sensorInfo);
-std::ostream& operator<< (std::ostream& str, const SensorInfo& i);
+/**
+ * Just for clarity and beauty
+ */
+template<typename T> using Ptr = std::shared_ptr<T>;
 
+// trim from start
+static inline std::string &ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+    return s;
+}
+
+// trim from end
+static inline std::string &rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
+
+// trim from both ends
+static inline std::string &trim(std::string &s) {
+    return ltrim(rtrim(s));
+}
 
 #endif //QUERYANALYZINGPACKET_UTILS_H

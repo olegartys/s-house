@@ -27,13 +27,32 @@ public:
 
     virtual ~IListener() = default;
 
+    enum class ReturnCode: int {
+        SUCCESS,
+        NULL_CALLBACK,
+        NOT_INIT
+    };
+
     /**
-     * @brief On this method listening is started (interface doesn't specifies rather block or nonblock method it is).
+     * @brief This method init the listener.
+     * IMPORTANT: if the listener is not initialized other methods would return NOT_INIT code.
      * @param Handler handler who will own this object. From him connection to the surrounded world can be accessed.
      * @param OnNewQueryCatchedCallbackType callback that triggered when new message was catched.
      * @param OnErrorCatchedCallbackType callback that triggered when error was catched.
      */
-    virtual int listen(OnNewQueryCatchedCallbackType, OnErrorCatchedCallbackType, const IHandler* = nullptr) = 0;
+    virtual ReturnCode init(OnNewQueryCatchedCallbackType, OnErrorCatchedCallbackType, const IHandler* = nullptr) = 0;
+
+    /**
+     * @brief On this method listening is started (interface doesn't specifies rather block or nonblock method it is).
+
+     */
+    virtual ReturnCode listen() = 0;
+
+    /**
+     * @brief Sends a Response object as a Message answer.
+     * IMPORTANT: id of conforming Message should be equal to Responses.
+     */
+    virtual ReturnCode sendResponse(const Response&) = 0;
 
     /**
      * @brief this method returns handler associated with the listener.
@@ -41,6 +60,7 @@ public:
     virtual const IHandler* getHandler() = 0;
 
 protected:
+    bool _is_initialized = false;
     const IHandler* handler;
 
 };
