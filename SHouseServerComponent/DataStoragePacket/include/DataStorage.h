@@ -60,6 +60,9 @@ private:
      * And it return THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB if there more than 1 such User Sensor Name.
      */
     ErrorCode getSensorTypeAndSystemSensorName(std::string userSensorName, std::string& systemSensorName, std::string& sensorType);
+
+    bool isConnected = false;
+
 };
 
 

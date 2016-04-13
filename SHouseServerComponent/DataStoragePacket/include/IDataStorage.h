@@ -33,18 +33,8 @@ public:
                             WRONG_CONFIG,
                             EXCEPTION_ERROR,
                             THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB,
-                            THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAME_IN_DB
-    };
-    /*
-     * @brief Class ErrorCode is the return value for private and protected methods.
-     */
-    enum class ErrorCode {  SUCCESS=0,
-                            NO_SUCH_USER_SENSOR_NAME_IN_DB,
-                            THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB,
-                            THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB,
-                            CANNOT_CHANGE_MONITOR_TYPE_STATE,
-                            THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB,
-                            EXCEPTION_ERROR
+                            THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAME_IN_DB,
+                            WRONG_SENSOR_TYPE
     };
     /*
      * @brief Struct SensorType has 3 std::string constants with types of Sensors: BINARY_TYPE, MANY_STATES_TYPE, MONITOR_TYPE.
@@ -142,6 +132,19 @@ public:
     virtual ReturnCode  getFAid(std::string userSensorName, std::string& FAid) =0;
 
 protected:
+
+    /*
+     * @brief Class ErrorCode is the return value for private and protected methods.
+     */
+    enum class ErrorCode {  SUCCESS=0,
+        NO_SUCH_USER_SENSOR_NAME_IN_DB,
+        THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB,
+        THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB,
+        CANNOT_CHANGE_MONITOR_TYPE_STATE,
+        THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB,
+        EXCEPTION_ERROR,
+        WRONG_SENSOR_TYPE
+    };
 
     //virtual int getData(std::string systemSensorName, std::string& ) =0;
     /*
