@@ -18,7 +18,7 @@ bash> ./../sqlpp11/sqlpp11/scripts/ddl2cpp DataStorage.sql ./DataDB DataDB
 Предворительно создается БД с необходимыми таблицами.
 
 Для копирования базы данных на свою машину необходимо ввести следующую команду:
-mysqldump -u root -p DataStorage < DataStorage.sql
+mysql -u root -p DataStorage < DataStorage.sql
 Затем ввести пароль: root .
 
 Для копирования данных со своей машины:

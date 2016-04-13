@@ -6,7 +6,9 @@
 #include <iostream>
 
 
-IDataStorage::ReturnCode   DataStorage::createConnectionWithSqlDB(std::string userName, std::string password, std::string DBname) {
+IDataStorage::ReturnCode   DataStorage::connect(const std::string &userName, const std::string &password,
+                                                const std::string &DBname)
+{
 // Use standard values for this project.
     try {
         config->user = userName;
@@ -23,8 +25,11 @@ IDataStorage::ReturnCode   DataStorage::createConnectionWithSqlDB(std::string us
     }
 }
 
-IDataStorage::ReturnCode DataStorage::setStateByUserQuery(std::string userSensorName, std::string newState, OnStateChangedCallbackType onStateChangedCallback,
-                                     OnOldStateCallbackType onOldStateCallback, OnErrorCallbackType onErrorCallback)
+IDataStorage::ReturnCode DataStorage::setStateByUserQuery(const std::string &userSensorName,
+                                                          const std::string &newState,
+                                                          OnStateChangedCallbackType onStateChangedCallback,
+                                                          OnOldStateCallbackType onOldStateCallback,
+                                                          OnErrorCallbackType onErrorCallback)
 {
     if (isConnected == false) {
         return ReturnCode::WRONG_CONFIG;
@@ -35,7 +40,7 @@ IDataStorage::ReturnCode DataStorage::setStateByUserQuery(std::string userSensor
 
     if (onStateChangedCallback== nullptr || onOldStateCallback == nullptr || onErrorCallback == nullptr) {
 
-                return ReturnCode::THERE_ARE_NULLPTR_CALLBACKS;
+                return ReturnCode::NULLPTR_CALLBACKS;
     }
 
 //     Create variable of MainTable.
@@ -95,7 +100,7 @@ IDataStorage::ReturnCode DataStorage::setStateByUserQuery(std::string userSensor
     return ReturnCode::SUCCESS;
 }
 
-IDataStorage::ReturnCode DataStorage::getState(std::string userSensorName, OnSuccessCallbackType onSuccessCallback,
+IDataStorage::ReturnCode DataStorage::getState(const std::string& userSensorName, OnSuccessCallbackType onSuccessCallback,
                                                OnErrorCallbackType onErrorCallback)
 {
     if (isConnected == false) {
@@ -103,7 +108,7 @@ IDataStorage::ReturnCode DataStorage::getState(std::string userSensorName, OnSuc
     }
 
     if (onErrorCallback == nullptr ||  onSuccessCallback == nullptr) {
-        return ReturnCode::THERE_ARE_NULLPTR_CALLBACKS;
+        return ReturnCode::NULLPTR_CALLBACKS;
     }
     // get data
     std::string systemSensorName, sensorType;
@@ -152,7 +157,9 @@ IDataStorage::ReturnCode DataStorage::getState(std::string userSensorName, OnSuc
 }
 
 // Сейчас Данный метод очень короткий и простой, но не как не проверяет то что данные введены верно!.
-IDataStorage::ReturnCode DataStorage::setStateByClientQuery(std::string systemSensorName, std::string sensorType, std::string newState,
+IDataStorage::ReturnCode DataStorage::setStateByClientQuery(const std::string& systemSensorName,
+                                                            const std::string& sensorType,
+                                                            const std::string& newState,
                                                             OnSuccessCallbackType onSuccessCallback,
                                                             OnErrorCallbackType onErrorCallback)
 {
@@ -161,7 +168,7 @@ IDataStorage::ReturnCode DataStorage::setStateByClientQuery(std::string systemSe
     }
 
     if (onSuccessCallback == nullptr || onErrorCallback == nullptr) {
-        return ReturnCode::THERE_ARE_NULLPTR_CALLBACKS;
+        return ReturnCode::NULLPTR_CALLBACKS;
     }
 
     try {
@@ -220,7 +227,7 @@ IDataStorage::ReturnCode DataStorage::removeSensor()
     return ReturnCode::SUCCESS;
 }
 
-IDataStorage::ReturnCode DataStorage::getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& systemSensorName)
+IDataStorage::ReturnCode DataStorage::getSystemSensorNameByUSName(const std::string& userSensorName, std::string& systemSensorName)
 {
     if (isConnected == false) {
         return ReturnCode::WRONG_CONFIG;
@@ -238,14 +245,37 @@ IDataStorage::ReturnCode DataStorage::getSystemSensorNameByUserSensorName(std::s
         systemSensorName = sSName;
         return ReturnCode::SUCCESS;
     } else if (inc == 0 ) {
-        return ReturnCode::NO_SUCH_USER_SENSOR_NAME_IN_DB;
+        return ReturnCode::NO_SUCH_US_NAME;
     } else if (inc > 1) {
-        return ReturnCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB;
+        return ReturnCode::TOO_MANY_US_NAMES;
+    }
+}
+IDataStorage::ReturnCode DataStorage::getUserSensorNameBySSName(const std::string &systemSensorName,
+                                                                std::string &userSensorName)
+{
+    if (isConnected == false) {
+        return ReturnCode::WRONG_CONFIG;
+    }
+
+    int inc = 0;
+    const auto tabMainTable  = DataDB::MainTable();
+    std::string uSName;
+    for (const auto& row : db->operator()(sqlpp::select(tabMainTable.userSensorName).from(tabMainTable).
+            where(tabMainTable.systemSensorName == systemSensorName))) {
+        ++inc;
+        uSName  = row.userSensorName;
+    }
+    if (inc == 1) {
+        userSensorName = uSName;
+        return ReturnCode::SUCCESS;
+    } else if (inc == 0 ) {
+        return ReturnCode::NO_SUCH_SS_NAME;
+    } else if (inc > 1) {
+        return ReturnCode::TOO_MANY_SS_NAMES;
     }
 }
 
-
-IDataStorage::ReturnCode DataStorage::getFAid(std::string userSensorName, std::string& FAid)
+IDataStorage::ReturnCode DataStorage::getFAid(const std::string& userSensorName, std::string& FAid)
 {
     if (isConnected == false) {
         return ReturnCode::WRONG_CONFIG;
@@ -281,7 +311,7 @@ IDataStorage::ReturnCode DataStorage::getFAid(std::string userSensorName, std::s
                     ++inc;
                 }
             } else {
-                return ReturnCode::WRONG_SENSOR_TYPE
+                return ReturnCode::WRONG_SENSOR_TYPE;
             }
 //        } catch (std::exception& e) {
 //            return ReturnCode::EXCEPTION_ERROR;
@@ -290,18 +320,18 @@ IDataStorage::ReturnCode DataStorage::getFAid(std::string userSensorName, std::s
             FAid = id;
             return ReturnCode::SUCCESS;
         } else if (inc == 0) {
-            return ReturnCode::THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAME_IN_DB;
+            return ReturnCode::NO_SUCH_SS_NAME;
         } else if (inc > 1) {
-            return ReturnCode::THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB;
+            return ReturnCode::TOO_MANY_SS_NAMES;
         }
 //  Main IF;
     } else {
         if (funcReturn == ErrorCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB) {
-            return ReturnCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB;
+            return ReturnCode::TOO_MANY_US_NAMES;
         }
 
         if (funcReturn == ErrorCode::NO_SUCH_USER_SENSOR_NAME_IN_DB) {
-            return ReturnCode::NO_SUCH_USER_SENSOR_NAME_IN_DB;
+            return ReturnCode::NO_SUCH_US_NAME;
         }
     }
 
@@ -316,7 +346,8 @@ IDataStorage::ReturnCode DataStorage::getFAid(std::string userSensorName, std::s
  *
  */
 
-IDataStorage::ErrorCode DataStorage::getSensorTypeAndSystemSensorName(std::string userSensorName, std::string &systemSensorName,
+IDataStorage::ErrorCode DataStorage::getSensorTypeAndSystemSensorName(const std::string& userSensorName,
+                                                                      std::string &systemSensorName,
                                                                       std::string &sensorType)
 {
 
@@ -346,7 +377,8 @@ IDataStorage::ErrorCode DataStorage::getSensorTypeAndSystemSensorName(std::strin
 }
 
 
-IDataStorage::ErrorCode DataStorage::getData(std::string systemSensorName, std::string sensorType, std::string& currentState)
+IDataStorage::ErrorCode DataStorage::getData(const std::string& systemSensorName,
+                                             const std::string& sensorType, std::string& currentState)
 {
 
     int inc = 0;

@@ -19,18 +19,21 @@ public:
 
     ~DataStorage() = default;
 
-    ReturnCode createConnectionWithSqlDB(std::string userName = "root", std::string password = "root", std::string DBname = "DataStorage") override;
+    ReturnCode connect(const std::string& userName = "root", const std::string& password = "root",
+                                    const std::string& DBname = "DataStorage") override;
 
-    ReturnCode setStateByUserQuery(std::string userSensorName, std::string newState, OnStateChangedCallbackType,
-                                         OnOldStateCallbackType,
-                                         OnErrorCallbackType) override;
+    ReturnCode setStateByUserQuery(const std::string& userSensorName, const std::string& newState,
+                                                                        OnStateChangedCallbackType,
+                                                                        OnOldStateCallbackType,
+                                                                        OnErrorCallbackType) override;
 
 
-    ReturnCode getState(std::string userSensorName, OnSuccessCallbackType, OnErrorCallbackType) override;
+    ReturnCode getState(const std::string& userSensorName, OnSuccessCallbackType, OnErrorCallbackType) override;
 
-    ReturnCode setStateByClientQuery(std::string systemSensorName, std::string sensorType, std::string newState,
-                                      OnSuccessCallbackType,
-                                      OnErrorCallbackType);
+    ReturnCode setStateByClientQuery(const std::string& systemSensorName, const std::string& sensorType,
+                                        const std::string& newState,
+                                        OnSuccessCallbackType,
+                                        OnErrorCallbackType) override;
 
     ReturnCode addSensor();
 
@@ -38,9 +41,11 @@ public:
     /*
      *
      */
-    ReturnCode getFAid(std::string userSensorName, std::string& FAid) override;
+    ReturnCode getFAid(const std::string& userSensorName, std::string& FAid) override;
 
-    ReturnCode getSystemSensorNameByUserSensorName(std::string userSensorName, std::string& systemSensorName) override;
+    ReturnCode getSystemSensorNameByUSName(const std::string& userSensorName, std::string& systemSensorName) override;
+    ReturnCode getUserSensorNameBySSName(const std::string& systemSensorName, std::string& userSensorName) override;
+
 
 private:
     // getData  это аналог getState, необходимый для внутреннего получения состояния датчика
@@ -52,7 +57,7 @@ private:
      * @param[in] currentState - std::string& reference on std::string in which current state will be written; *
      */
 
-    ErrorCode getData(std::string systemSensorName, std::string sensorType, std::string& currentState);
+    ErrorCode getData(const std::string& systemSensorName,const std::string& sensorType, std::string& currentState);
     /*
      * @brief Method getSensorTypeAndSystemSensorName get Type of sensor (Binary, ManyStates or Monitor Type) and System sensor name by User Sensor Name from DB.
      * This method return IDataStorage::ErrorCode.
@@ -60,7 +65,8 @@ private:
      * It return NO_SUCH_USER_SENSOR_NAME_IN_DB if there aren't such User sensor names.
      * And it return THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB if there more than 1 such User Sensor Name.
      */
-    ErrorCode getSensorTypeAndSystemSensorName(std::string userSensorName, std::string& systemSensorName, std::string& sensorType);
+    ErrorCode getSensorTypeAndSystemSensorName(const std::string& userSensorName,
+                                               std::string& systemSensorName, std::string& sensorType);
 
     bool isConnected = false;
 
