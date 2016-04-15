@@ -8,7 +8,7 @@
 #include <memory>
 #include "IListener.h"
 #include "IActor.h"
-#include "FunctionTraits.h"
+#include "../../CommonPacket/include/FunctionTraits.h"
 #include "IHandler.h"
 
 

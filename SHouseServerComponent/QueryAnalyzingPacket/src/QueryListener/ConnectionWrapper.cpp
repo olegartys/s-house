@@ -4,7 +4,7 @@
 
 #include <QueryListener/ConnectionWrapper.h>
 #include <assert.h>
-#include <Utils.h>
+#include "../../../CommonPacket/include/Utils.h"
 
 const std::string ConnectionWrapper::TAG = "ConnectionWrapper";
 

@@ -17,6 +17,9 @@ add_subdirectory(MessagePacket)
 # DataStoragePacket adding.
 add_subdirectory(DataStoragePacket)
 
+# Common packet
+add_subdirectory(CommonPacket)
+
 # Main output artefact. [now for TEST]
 add_executable(SHouseServerComponent main.cpp main.cpp)
 
@@ -24,6 +27,7 @@ add_executable(SHouseServerComponent main.cpp main.cpp)
 target_link_libraries(SHouseServerComponent DataStoragePacket)
 target_link_libraries(SHouseServerComponent MessagePacket)
 target_link_libraries(SHouseServerComponent QueryAnalyzingPacket)
+target_link_libraries(SHouseServerComponent CommonPacket)
 
 # Add external libraries to Main executable artefact.
 #target_link_libraries(SHouseServerComponent jsoncpp)
