@@ -8,3 +8,6 @@ add_library(CommonPacket SHARED ${SOURCE_FILES})
 
 # Set directory with include files
 target_include_directories(CommonPacket PUBLIC include/)
+
+# Set directory with ThreadPool in include directories list
+target_include_directories(CommonPacket PUBLIC include/ThreadPool)

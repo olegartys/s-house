@@ -10,3 +10,6 @@
 [submodule "SHouseServerComponent/external/sqlpp11/date"]
 	path = SHouseServerComponent/external/sqlpp11/date
 	url = https://github.com/HowardHinnant/date.git
+[submodule "SHouseServerComponent/external/ThreadPool"]
+	path = SHouseServerComponent/external/ThreadPool
+	url = https://github.com/progschj/ThreadPool
