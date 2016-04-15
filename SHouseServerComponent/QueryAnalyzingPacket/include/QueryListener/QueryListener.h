@@ -18,7 +18,9 @@
 
 /**
  * @brief This class is sample implementation of IListener interface.
- * //TODO: asynchronous calls in a thread pool; sendResponse method
+ * @todo: asynchronous calls in a thread pool;
+ * @todo: sendResponse method
+ * @todo: trigger onError callback where is necessary
  *
  */
 class QueryListener : public IListener {
@@ -54,10 +56,10 @@ public:
     /**
      * @brief starts listening. This method works in blocking mode, but all the callbacks will be called asynchronously.
      */
-    virtual ReturnCode listen() override;
+    virtual ReturnCode listen() noexcept(false) override;
 
     /**
-     *
+     * @brief return a handler with which Listener is associated.
      */
     virtual const IHandler* getHandler() override;
 

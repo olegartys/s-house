@@ -39,15 +39,19 @@ void QueryHandler::startListen() {
     switch (res1) {
 
         case IActor::ReturnCode::SUCCESS:
+
             break;
 
         case IActor::ReturnCode::NULL_CALLBACK:
+
             break;
 
         case IActor::ReturnCode::NOT_INIT:
+
             break;
 
         case IActor::ReturnCode::NULL_STORAGE:
+
             break;
     }
 
@@ -65,13 +69,14 @@ void QueryHandler::onListenerNewMsg(std::string data) {
     switch (res) {
         // If message parsed successfully
         case Message::ReturnCode::SUCCESS:
+            LogD("KEK", "HERE");
             actor->commit(msg); //TODO check return code
 
             break;
 
         // Get the wrong format or broken message
         case Message::ReturnCode::DESERIALIZE_ERR:
-
+            LogD("KEK", "ERROR");
             break;
     }
 };

@@ -12,6 +12,7 @@
 
 const std::string QueryListener::TAG = "QueryListener";
 
+/*********************************************Interface implementation*************************************************/
 QueryListener::QueryListener(std::string socketPath, std::string userAuthKey, std::string clientAuthKey) :
         socketPath(socketPath), userAuthKey(userAuthKey), clientAuthKey(clientAuthKey) {
 
@@ -59,6 +60,7 @@ QueryListener::ReturnCode QueryListener::listen() {
     int ret = initMasterSocket();
     if (ret < 0) {
         perror("initMasterSocket");
+        return ReturnCode::UNKNOWN_ERROR;
     }
 
     return ReturnCode::SUCCESS ;
@@ -75,12 +77,13 @@ IListener::ReturnCode QueryListener::sendResponse(const Response &response) {
 }
 
 
+/*************************************************Logic implementation*************************************************/
 int QueryListener::initMasterSocket() {
     // Initialize master socket
     masterSock = socket(AF_UNIX, SOCK_STREAM, 0);
     if (masterSock < 0) {
         LogD(TAG, "socket creation error");
-        return -1;
+        throw std::runtime_error(strerror(errno));
     }
 
     masterAddr.sun_family = AF_UNIX;
@@ -90,7 +93,7 @@ int QueryListener::initMasterSocket() {
     eventBase = event_base_new();
     if (eventBase == nullptr) {
         LogD(TAG, "event base init error");
-        return -1;
+        throw std::runtime_error("Event base init error.");
     }
 
     // Create listener on a new connections
@@ -101,6 +104,7 @@ int QueryListener::initMasterSocket() {
 
     if (connListener == nullptr) {
         LogD(TAG, "evconnlistener init error");
+        throw std::runtime_error("Evconnlistener init error.");
         return -1;
     }
 
@@ -110,6 +114,7 @@ int QueryListener::initMasterSocket() {
     // Start listening
     LogD(TAG, "Start listening");
     int ret = event_base_dispatch(eventBase);
+    return ret;
 }
 
 
@@ -146,9 +151,9 @@ void QueryListener::onRead(bufferevent *bufEvent, void *arg) {
     // Search for connection in the collection
     auto connection = _this->connections.find(bufEvent);
 
-    // If connection contained in collection
+    // If connection contained in the collection
     if (connection != _this->connections.end()) {
-        // Trigger callback
+        // Trigger success callback
         std::thread thr(_this->onNew, data);
         thr.detach();
 

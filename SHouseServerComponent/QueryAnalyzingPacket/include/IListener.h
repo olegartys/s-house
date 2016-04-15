@@ -18,6 +18,7 @@ class IHandler;
  */
 class IListener {
 public:
+
     /**
      * Callback types.
      * Callback can transfer handler object if it is necessary for calling side.
@@ -30,7 +31,8 @@ public:
     enum class ReturnCode: int {
         SUCCESS,
         NULL_CALLBACK,
-        NOT_INIT
+        NOT_INIT,
+        UNKNOWN_ERROR
     };
 
     /**
@@ -44,7 +46,6 @@ public:
 
     /**
      * @brief On this method listening is started (interface doesn't specifies rather block or nonblock method it is).
-
      */
     virtual ReturnCode listen() = 0;
 
