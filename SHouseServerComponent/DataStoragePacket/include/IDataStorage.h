@@ -55,8 +55,10 @@ public:
     /*
      * @brief Usings for callbacks.
      */
-    using OnStateChangedCallbackType = std::function<int()>;
-    using OnOldStateCallbackType = std::function<int()>;
+//    using OnStateChangedCallbackType = std::function<int()>;
+//    using OnOldStateCallbackType = std::function<int()>;
+    using OnSetStateSuccessCallbackType =  std::function<int(bool isChanged, std::string data)>;
+
 // QUERY ID??????
     using OnSuccessCallbackType = std::function<int(std::string data)>;
     using OnErrorCallbackType = std::function<int(std::string errorMsg)>;
@@ -74,22 +76,25 @@ public:
      */
     virtual ReturnCode connect(const std::string& userName, const std::string& password, const std::string& DBname) =0;
 
-    /*
-     *  @brief Method setStateByUserQuery change sensor's state by User query.
-     *  It return ReturnCode and has next parameters:
-     *  @param[in] userSensorName - std::string& with User Sensor Name.
-     *  @param[in] newState - std::string& with new State which user choose.
-     *  @param[in] OnStateChangedCallbackType - callback which is used when state of sensor changed.
-     *  @param[in] OnOldStateCallbackType - callback which is used when state of sensor changed.
-     *  @param[in] OnErrorCallbackType - callback which is used when any error happened.
-     *
-     *  It return ReturnCode::THERE_ARE_NULL_PTR_CALLBACKS if there 1 or more nullptr callback.
-     *  In other way it return ReturnCode::SUCCESS.
-     */
-    virtual ReturnCode setStateByUserQuery(const std::string& userSensorName, const std::string& newState,
-                                                                                    OnStateChangedCallbackType,
-                                                                                    OnOldStateCallbackType ,
-                                                                                    OnErrorCallbackType) =0;
+    virtual ReturnCode setState(const std::string& systemSensorName, std::string& newState, OnSetStateSuccessCallbackType, OnErrorCallbackType) =0;
+
+
+//    /*
+//     *  @brief Method setStateByUserQuery change sensor's state by User query.
+//     *  It return ReturnCode and has next parameters:
+//     *  @param[in] userSensorName - std::string& with User Sensor Name.
+//     *  @param[in] newState - std::string& with new State which user choose.
+//     *  @param[in] OnStateChangedCallbackType - callback which is used when state of sensor changed.
+//     *  @param[in] OnOldStateCallbackType - callback which is used when state of sensor changed.
+//     *  @param[in] OnErrorCallbackType - callback which is used when any error happened.
+//     *
+//     *  It return ReturnCode::THERE_ARE_NULL_PTR_CALLBACKS if there 1 or more nullptr callback.
+//     *  In other way it return ReturnCode::SUCCESS.
+//     */
+//    virtual ReturnCode setStateByUserQuery(const std::string& userSensorName, const std::string& newState,
+//                                                                                    OnStateChangedCallbackType,
+//                                                                                    OnOldStateCallbackType ,
+//                                                                                    OnErrorCallbackType) =0;
     /*
      * @brief Method getState return to User current state of sensor.
      * It return ReturnCode and has next parameters:
@@ -99,19 +104,19 @@ public:
      */
     virtual ReturnCode getState(const std::string& userSensorName, OnSuccessCallbackType, OnErrorCallbackType) =0;
 
-    /*
-     * @brief Method setStateByClientQuery change data in DB by Client query. (Client = FA).
-     * It return ReturnCode and has next parameters:
-     * @param[in] systemSensorName - std::string& with System Sensor Name.
-     * @param[in] sensorType - std::string& with type of sensor.
-     * @param[in] newState - std::string& with new state.
-     * @param[in] OnSuccessCallbackType - callback which is used if state is changed without errors.
-     * @param[in] OnErrorCallBackType - callback which is used when any error happened.
-     */
-    virtual ReturnCode setStateByClientQuery(const std::string& systemSensorName, const std::string& sensorType,
-                                                                    const std::string& newState,
-                                                                    OnSuccessCallbackType,
-                                                                    OnErrorCallbackType) =0;
+//    /*
+//     * @brief Method setStateByClientQuery change data in DB by Client query. (Client = FA).
+//     * It return ReturnCode and has next parameters:
+//     * @param[in] systemSensorName - std::string& with System Sensor Name.
+//     * @param[in] sensorType - std::string& with type of sensor.
+//     * @param[in] newState - std::string& with new state.
+//     * @param[in] OnSuccessCallbackType - callback which is used if state is changed without errors.
+//     * @param[in] OnErrorCallBackType - callback which is used when any error happened.
+//     */
+//    virtual ReturnCode setStateByClientQuery(const std::string& systemSensorName, const std::string& sensorType,
+//                                                                    const std::string& newState,
+//                                                                    OnSuccessCallbackType,
+//                                                                    OnErrorCallbackType) =0;
 
     /*
      * @brief Method getSystemSensorNameByUsSName - write systemSensorName into reference on std::string.

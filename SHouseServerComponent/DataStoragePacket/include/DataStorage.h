@@ -22,18 +22,19 @@ public:
     ReturnCode connect(const std::string& userName = "root", const std::string& password = "root",
                                     const std::string& DBname = "DataStorage") override;
 
-    ReturnCode setStateByUserQuery(const std::string& userSensorName, const std::string& newState,
-                                                                        OnStateChangedCallbackType,
-                                                                        OnOldStateCallbackType,
-                                                                        OnErrorCallbackType) override;
+//    ReturnCode setStateByUserQuery(const std::string& userSensorName, const std::string& newState,
+//                                                                        OnStateChangedCallbackType,
+//                                                                        OnOldStateCallbackType,
+//                                                                        OnErrorCallbackType) override;
 
+    ReturnCode setState(const std::string& systemSensorName, std::string& newState, OnSetStateSuccessCallbackType, OnErrorCallbackType) override;
 
     ReturnCode getState(const std::string& userSensorName, OnSuccessCallbackType, OnErrorCallbackType) override;
 
-    ReturnCode setStateByClientQuery(const std::string& systemSensorName, const std::string& sensorType,
-                                        const std::string& newState,
-                                        OnSuccessCallbackType,
-                                        OnErrorCallbackType) override;
+//    ReturnCode setStateByClientQuery(const std::string& systemSensorName, const std::string& sensorType,
+//                                        const std::string& newState,
+//                                        OnSuccessCallbackType,
+//                                        OnErrorCallbackType) override;
 
     ReturnCode addSensor();
 
