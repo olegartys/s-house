@@ -38,7 +38,7 @@ public:
 
     ReturnCode addSensor();
 
-    ReturnCode removeSensor();
+    ReturnCode removeSensor(std::string& systemSensorName, OnSuccessCallbackType, OnErrorCallbackType);
     /*
      *
      */

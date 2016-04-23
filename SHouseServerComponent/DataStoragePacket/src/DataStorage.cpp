@@ -64,6 +64,7 @@ IDataStorage::ReturnCode DataStorage::setState(const std::string &systemSensorNa
             std::string exec;
             try {
                 // использование execute безопасно так как мы уверены что тип и имя верные, иначе выполнение метода завершилось бы ранее
+               // так же использование execute значительно сокращает количество кода, зависимого от конкретных таблиц.
                 exec = "update " + sensorType + " set state='" + newState + "' where systemSensorName='" +
                                         systemSensorName + "'";
                 db->execute(exec);
@@ -288,12 +289,49 @@ IDataStorage::ReturnCode DataStorage::addSensor()
     return ReturnCode::SUCCESS;
 }
 
-IDataStorage::ReturnCode DataStorage::removeSensor()
+IDataStorage::ReturnCode DataStorage::removeSensor(std::string& systemSensorName, OnSuccessCallbackType onSuccessCallback,
+                                                   OnErrorCallbackType onErrorCallback)
 {
     if (isConnected == false) {
         return ReturnCode::WRONG_CONFIG;
     }
+    std::string sensorType;
+    try {
+            int inc = 0;
+            const auto tabMainTable = DataDB::MainTable();
+            for (const auto &row : db->operator()(sqlpp::select( tabMainTable.sensorType).from(tabMainTable)
+                                                          .where(tabMainTable.systemSensorName == systemSensorName))) {
+                inc++;
+                sensorType = row.sensorType;
+            }
+            if (inc == 0) {
+                onErrorCallback("NO_SUCH_SS_NAME");
+                return ReturnCode::NO_SUCH_SS_NAME;
+            } else if (inc > 1) {
+                onErrorCallback("TOO MANY SS NAMES");
+                return ReturnCode::TOO_MANY_SS_NAMES;
+            }
+    } catch (std::exception& e) {
+        onErrorCallback("EXCEPTION");
+        return ReturnCode::EXCEPTION_ERROR;
+    }
+
+    auto tabBinaryType = DataDB::BinaryType();
+    auto tabMainTable = DataDB::MainTable();
+    try {
+        db->operator()(remove_from(tabMainTable).where(tabMainTable.systemSensorName == systemSensorName));
+
+        db->operator()(remove_from(tabBinaryType).where(tabBinaryType.systemSensorName == systemSensorName));
+    } catch (std::exception& e) {
+        onErrorCallback(e.what());
+        return ReturnCode::EXCEPTION_ERROR;
+    }
+    onSuccessCallback("remove - success");
     return ReturnCode::SUCCESS;
+
+
+//    db(remove_from(tab).where(tab.alpha == tab.alpha + 3));
+
 }
 
 IDataStorage::ReturnCode DataStorage::getSystemSensorNameByUSName(const std::string& userSensorName, std::string& systemSensorName)

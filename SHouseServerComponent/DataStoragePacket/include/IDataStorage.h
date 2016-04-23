@@ -133,7 +133,7 @@ public:
 
     virtual ReturnCode addSensor() =0;
 
-    virtual ReturnCode removeSensor() =0;
+    virtual ReturnCode removeSensor(std::string& systemSensorName, OnSuccessCallbackType, OnErrorCallbackType) =0;
     /*
      * Данный тип принимает UserSensorName, т.к. в таком случае ему не нужно узнавать тип датчика.
      */
