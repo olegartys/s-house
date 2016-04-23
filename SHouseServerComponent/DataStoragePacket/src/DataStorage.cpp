@@ -316,12 +316,22 @@ IDataStorage::ReturnCode DataStorage::removeSensor(std::string& systemSensorName
         return ReturnCode::EXCEPTION_ERROR;
     }
 
-    auto tabBinaryType = DataDB::BinaryType();
-    auto tabMainTable = DataDB::MainTable();
     try {
+        auto tabMainTable = DataDB::MainTable();
         db->operator()(remove_from(tabMainTable).where(tabMainTable.systemSensorName == systemSensorName));
-
-        db->operator()(remove_from(tabBinaryType).where(tabBinaryType.systemSensorName == systemSensorName));
+        if (sensorType == sensorTypeConstants.binaryType) {
+            auto tabBinaryType = DataDB::BinaryType();
+            db->operator()(remove_from(tabBinaryType).where(tabBinaryType.systemSensorName == systemSensorName));
+        } else if (sensorType == sensorTypeConstants.manyStatesType) {
+            auto tabManyStatesType = DataDB::ManyStatesType();
+            db->operator()(remove_from(tabManyStatesType).where(tabManyStatesType.systemSensorName == systemSensorName));
+        } else if (sensorType ==  sensorTypeConstants.monitorType) {
+            auto tabMonitorType = DataDB::MonitorType();
+            db->operator()(remove_from(tabMonitorType).where(tabMonitorType.systemSensorName == systemSensorName));
+        } else {
+            onErrorCallback("No such sensor type");
+            return ReturnCode::WRONG_SENSOR_TYPE;
+        }
     } catch (std::exception& e) {
         onErrorCallback(e.what());
         return ReturnCode::EXCEPTION_ERROR;

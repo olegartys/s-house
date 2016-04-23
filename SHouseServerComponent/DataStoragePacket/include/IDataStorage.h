@@ -39,11 +39,11 @@ public:
     /*
      * @brief Struct SensorType has 3 std::string constants with types of Sensors: BINARY_TYPE, MANY_STATES_TYPE, MONITOR_TYPE.
      */
-    static struct SensorType {
+    /*static*/  struct SensorType {
         const std::string binaryType =  "BinaryType";
         const std::string manyStatesType = "ManyStatesType";
         const std::string monitorType = "MonitorType";
-    } SensorTypes;
+    }; /*SensorTypes; */
     /*
      * @brief Struct BinaryTypeStates has 2 std::string constants with states for Binary Type Sensor: ON, OFF.
      */
@@ -164,6 +164,7 @@ protected:
      */
     std::shared_ptr<sqlpp::mysql::connection> db;
     SensorType sensorTypeConstants;
+
 
 };
 
