@@ -27,7 +27,7 @@ public:
 //                                                                        OnOldStateCallbackType,
 //                                                                        OnErrorCallbackType) override;
 
-    ReturnCode setState(const std::string& systemSensorName, std::string& newState, OnSetStateSuccessCallbackType, OnErrorCallbackType) override;
+    ReturnCode setState(const std::string& systemSensorName, const std::string& newState, OnSetStateSuccessCallbackType, OnErrorCallbackType) override;
 
     ReturnCode getState(const std::string& userSensorName, OnSuccessCallbackType, OnErrorCallbackType) override;
 
@@ -36,9 +36,12 @@ public:
 //                                        OnSuccessCallbackType,
 //                                        OnErrorCallbackType) override;
 
-    ReturnCode addSensor();
+    ReturnCode addSensor(const std::string& userSensorName, const std::string& systemSensorName,
+                         const std::string& sensorType, const std::string& FAid, const std::string& kindOfSensor,
+                         const std::string& startingState,
+                         OnSuccessCallbackType, OnErrorCallbackType);
 
-    ReturnCode removeSensor(std::string& systemSensorName, OnSuccessCallbackType, OnErrorCallbackType);
+    ReturnCode removeSensor(const std::string& systemSensorName, OnSuccessCallbackType, OnErrorCallbackType);
     /*
      *
      */

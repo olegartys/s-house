@@ -25,7 +25,7 @@ IDataStorage::ReturnCode DataStorage::connect(const std::string &userName, const
     }
 }
 
-IDataStorage::ReturnCode DataStorage::setState(const std::string &systemSensorName, std::string &newState,
+IDataStorage::ReturnCode DataStorage::setState(const std::string &systemSensorName, const std::string &newState,
                                                OnSetStateSuccessCallbackType onSuccessCallback, OnErrorCallbackType onErrorCallback)
 {
     if (isConnected == false) {
@@ -91,6 +91,7 @@ IDataStorage::ReturnCode DataStorage::setState(const std::string &systemSensorNa
         onErrorCallback("Wrong Sensor Type");
         return ReturnCode::SUCCESS;
     }
+    return ReturnCode::SUCCESS;
 }
 
 
@@ -281,19 +282,90 @@ IDataStorage::ReturnCode DataStorage::getState(const std::string& userSensorName
 //    return ReturnCode::SUCCESS;
 //}
 
-IDataStorage::ReturnCode DataStorage::addSensor()
+IDataStorage::ReturnCode DataStorage::addSensor(const std::string& userSensorName, const std::string& systemSensorName,
+                                                const std::string& sensorType, const std::string& FAid, const std::string& kindOfSensor,
+                                                const std::string& startingState,
+                                                OnSuccessCallbackType onSuccessCallback, OnErrorCallbackType onErrorCallback)
 {
     if (isConnected == false) {
         return ReturnCode::WRONG_CONFIG;
     }
+    if (onSuccessCallback ==  nullptr  || onErrorCallback == nullptr) {
+        return ReturnCode::NULLPTR_CALLBACKS;
+    }
+    {
+        int inc = 0;
+        const auto tabMainTable = DataDB::MainTable();
+        for (const auto &row : db->operator()(sqlpp::select(tabMainTable.systemSensorName).from(tabMainTable).
+                where(tabMainTable.userSensorName == userSensorName))) {
+            ++inc;
+            break;
+        }
+        if (inc > 0) {
+            onErrorCallback("Such user sensor name is already used.");
+            return ReturnCode::SUCH_US_NAME_IS_USED;
+        }
+        inc = 0;
+        for (const auto &row : db->operator()(sqlpp::select(tabMainTable.sensorType).from(tabMainTable).
+                where(tabMainTable.systemSensorName == systemSensorName))) {
+            ++inc;
+            break;
+        }
+        if (inc > 0) {
+            onErrorCallback("Such system sensor name is already used.");
+            return ReturnCode::SUCH_SS_NAME_IS_USED;
+        }
+
+    }
+    if (sensorType != sensorTypeConstants.binaryType && sensorType != sensorTypeConstants.monitorType && sensorType != sensorTypeConstants.manyStatesType) {
+        return ReturnCode::WRONG_SENSOR_TYPE;
+    }
+
+    try {
+        auto tabMainTable = DataDB::MainTable();
+        db->operator()(insert_into(tabMainTable).set(tabMainTable.userSensorName = userSensorName,
+                                                     tabMainTable.systemSensorName = systemSensorName,
+                                                     tabMainTable.sensorType = sensorType));
+
+        if (sensorType == sensorTypeConstants.binaryType) {
+            auto tabBinaryType = DataDB::BinaryType();
+            db->operator()(insert_into(tabBinaryType).set(tabBinaryType.systemSensorName = systemSensorName, tabBinaryType.type = kindOfSensor, tabBinaryType.FAId = FAid,
+                                                                                                                                    tabBinaryType.state = startingState));
+            onSuccessCallback("Sensor added");
+            return ReturnCode::SUCCESS;
+        }
+
+        if (sensorType == sensorTypeConstants.monitorType) {
+            auto tabMonitorType = DataDB::MonitorType();
+            db->operator()(insert_into(tabMonitorType).set(tabMonitorType.systemSensorName = systemSensorName, tabMonitorType.type = kindOfSensor, tabMonitorType.FAId = FAid,
+                                                          tabMonitorType.state = startingState));
+            onSuccessCallback("Sensor added");
+            return ReturnCode::SUCCESS;
+        }
+
+        if (sensorType == sensorTypeConstants.manyStatesType) {
+            auto tabManyStatesType = DataDB::BinaryType();
+            db->operator()(insert_into(tabManyStatesType).set(tabManyStatesType.systemSensorName = systemSensorName, tabManyStatesType.type = kindOfSensor, tabManyStatesType.FAId = FAid,
+                                                          tabManyStatesType.state = startingState));
+            onSuccessCallback("Sensor added");
+            return ReturnCode::SUCCESS;
+        }
+    } catch (std::exception& e) {
+        onErrorCallback(e.what());
+        return ReturnCode::EXCEPTION_ERROR;
+    }
     return ReturnCode::SUCCESS;
 }
 
-IDataStorage::ReturnCode DataStorage::removeSensor(std::string& systemSensorName, OnSuccessCallbackType onSuccessCallback,
+IDataStorage::ReturnCode DataStorage::removeSensor(const std::string& systemSensorName, OnSuccessCallbackType onSuccessCallback,
                                                    OnErrorCallbackType onErrorCallback)
 {
     if (isConnected == false) {
         return ReturnCode::WRONG_CONFIG;
+    }
+
+    if (onSuccessCallback ==  nullptr  || onErrorCallback == nullptr) {
+        return ReturnCode::NULLPTR_CALLBACKS;
     }
     std::string sensorType;
     try {
@@ -319,7 +391,7 @@ IDataStorage::ReturnCode DataStorage::removeSensor(std::string& systemSensorName
     try {
         auto tabMainTable = DataDB::MainTable();
         db->operator()(remove_from(tabMainTable).where(tabMainTable.systemSensorName == systemSensorName));
-        if (sensorType == sensorTypeConstants.binaryType) {
+        if (sensorType ==   sensorTypeConstants.binaryType) {
             auto tabBinaryType = DataDB::BinaryType();
             db->operator()(remove_from(tabBinaryType).where(tabBinaryType.systemSensorName == systemSensorName));
         } else if (sensorType == sensorTypeConstants.manyStatesType) {
@@ -366,6 +438,7 @@ IDataStorage::ReturnCode DataStorage::getSystemSensorNameByUSName(const std::str
     } else if (inc > 1) {
         return ReturnCode::TOO_MANY_US_NAMES;
     }
+    return ReturnCode::SUCCESS;
 }
 IDataStorage::ReturnCode DataStorage::getUserSensorNameBySSName(const std::string &systemSensorName,
                                                                 std::string &userSensorName)
@@ -390,6 +463,7 @@ IDataStorage::ReturnCode DataStorage::getUserSensorNameBySSName(const std::strin
     } else if (inc > 1) {
         return ReturnCode::TOO_MANY_SS_NAMES;
     }
+    return ReturnCode::SUCCESS;
 }
 
 IDataStorage::ReturnCode DataStorage::getFAid(const std::string& userSensorName, std::string& FAid)
@@ -451,10 +525,8 @@ IDataStorage::ReturnCode DataStorage::getFAid(const std::string& userSensorName,
             return ReturnCode::NO_SUCH_US_NAME;
         }
     }
-
+    return ReturnCode::SUCCESS;
 }
-
-
 
 /*
  *
@@ -491,6 +563,7 @@ IDataStorage::ErrorCode DataStorage::getSensorTypeAndSystemSensorName(const std:
     } catch (std::exception& e) {
         return ErrorCode::EXCEPTION_ERROR;
     }
+    return ErrorCode::SUCCESS;
 }
 
 
@@ -512,7 +585,6 @@ IDataStorage::ErrorCode DataStorage::getData(const std::string& systemSensorName
 
         } else if (sensorType == sensorTypeConstants.manyStatesType) {
             auto tabManyStatesType = DataDB::ManyStatesType();
-            int inc = 0;
             for (const auto &row : db->operator()(sqlpp::select(tabManyStatesType.state).from(tabManyStatesType).
                     where(tabManyStatesType.systemSensorName == systemSensorName))) {
                 data = row.state;
@@ -521,7 +593,6 @@ IDataStorage::ErrorCode DataStorage::getData(const std::string& systemSensorName
 
         } else if (sensorType == sensorTypeConstants.monitorType) {
             auto tabMonitorType = DataDB::MonitorType();
-            int inc = 0;
             for (const auto &row : db->operator()(sqlpp::select(tabMonitorType.state).from(tabMonitorType).
                     where(tabMonitorType.systemSensorName == systemSensorName))) {
                 data = row.state;

@@ -34,23 +34,25 @@ public:
                             EXCEPTION_ERROR,
                             TOO_MANY_SS_NAMES,
                             NO_SUCH_SS_NAME,
-                            WRONG_SENSOR_TYPE
+                            WRONG_SENSOR_TYPE,
+                            SUCH_US_NAME_IS_USED,
+                            SUCH_SS_NAME_IS_USED
     };
     /*
      * @brief Struct SensorType has 3 std::string constants with types of Sensors: BINARY_TYPE, MANY_STATES_TYPE, MONITOR_TYPE.
      */
-    /*static*/  struct SensorType {
+    /*static*/ struct SensorType {
         const std::string binaryType =  "BinaryType";
         const std::string manyStatesType = "ManyStatesType";
         const std::string monitorType = "MonitorType";
     }; /*SensorTypes; */
-    /*
-     * @brief Struct BinaryTypeStates has 2 std::string constants with states for Binary Type Sensor: ON, OFF.
-     */
-    static struct BinaryTypeStates {
-        const std::string on = "ON";
-        const std::string off = "OFF";
-    } BinaryTypesStates;
+//    /*
+//     * @brief Struct BinaryTypeStates has 2 std::string constants with states for Binary Type Sensor: ON, OFF.
+//     */
+//    static struct BinaryTypeStates {
+//        const std::string on = "ON";
+//        const std::string off = "OFF";
+//    } BinaryTypesStates;
 
     /*
      * @brief Usings for callbacks.
@@ -76,7 +78,7 @@ public:
      */
     virtual ReturnCode connect(const std::string& userName, const std::string& password, const std::string& DBname) =0;
 
-    virtual ReturnCode setState(const std::string& systemSensorName, std::string& newState, OnSetStateSuccessCallbackType, OnErrorCallbackType) =0;
+    virtual ReturnCode setState(const std::string& systemSensorName, const std::string& newState, OnSetStateSuccessCallbackType, OnErrorCallbackType) =0;
 
 
 //    /*
@@ -131,9 +133,12 @@ public:
     virtual ReturnCode getSystemSensorNameByUSName(const std::string& userSensorName, std::string& systemSensorName) = 0;
     virtual ReturnCode getUserSensorNameBySSName(const std::string& systemSensorName, std::string& userSensorName) = 0;
 
-    virtual ReturnCode addSensor() =0;
+    virtual ReturnCode addSensor(const std::string& userSensorName, const std::string& systemSensorName,
+                                 const std::string& sensorType, const std::string& FAid, const std::string& kindOfSensor,
+                                 const std::string& startingState,
+                                 OnSuccessCallbackType, OnErrorCallbackType) =0;
 
-    virtual ReturnCode removeSensor(std::string& systemSensorName, OnSuccessCallbackType, OnErrorCallbackType) =0;
+    virtual ReturnCode removeSensor(const std::string& systemSensorName, OnSuccessCallbackType, OnErrorCallbackType) =0;
     /*
      * Данный тип принимает UserSensorName, т.к. в таком случае ему не нужно узнавать тип датчика.
      */
