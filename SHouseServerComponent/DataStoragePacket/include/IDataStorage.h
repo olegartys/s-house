@@ -10,6 +10,9 @@
 
 #include <sqlpp11/sqlpp11.h>
 #include <sqlpp11/mysql/mysql.h>
+#include "../../external/ThreadPool/ThreadPool.h"
+
+static ThreadPool dsThreadPool(4);
 
 /*
  * @brief Class IDataStorage is an interface between user or client and Sql DataBase.
@@ -19,6 +22,7 @@
  * All public methods of this class return enum class ReturnCode,which is described in this class.
  * All public methods has as parameters CallBacks, which are used in new thread on Success or on Error.
  */
+
 
 class IDataStorage {
 public:
@@ -169,7 +173,6 @@ protected:
      */
     std::shared_ptr<sqlpp::mysql::connection> db;
     SensorType sensorTypeConstants;
-
 
 };
 
