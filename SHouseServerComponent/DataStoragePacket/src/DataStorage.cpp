@@ -17,6 +17,7 @@ IDataStorage::ReturnCode DataStorage::connect(const std::string &userName, const
         config->debug = true;
 //    set config into connection.
         db = std::shared_ptr<sqlpp::mysql::connection>(new sqlpp::mysql::connection(config));
+        dsThreadPool.reset(new ThreadPool(4));
         isConnected = true;
         return ReturnCode::SUCCESS;
     } catch (std::exception& e) {
@@ -57,7 +58,7 @@ IDataStorage::ReturnCode DataStorage::setState(const std::string &systemSensorNa
     if (getDataReturn == ErrorCode::SUCCESS) {
         if (currentState == newState) {
 //                CОСТОЯНИЕ ТАКОЕ ЖЕ
-            dsThreadPool.enqueue(onSuccessCallback, false, currentState);
+            dsThreadPool->enqueue(onSuccessCallback, false, currentState);
            return ReturnCode::SUCCESS;
         } else {
 //                СОСТОЯНИЕ ИЗМЕНИЛОСЬ
@@ -69,25 +70,25 @@ IDataStorage::ReturnCode DataStorage::setState(const std::string &systemSensorNa
                                         systemSensorName + "'";
                 db->execute(exec);
             } catch (std::exception& e) {
-                dsThreadPool.enqueue(onErrorCallback, e.what());
+                dsThreadPool->enqueue(onErrorCallback, e.what());
                 return ReturnCode::EXCEPTION_ERROR;
             }
-            dsThreadPool.enqueue(onSuccessCallback, true, newState); // передаю новое состояние
+            dsThreadPool->enqueue(onSuccessCallback, true, newState); // передаю новое состояние
 //             ИЗМЕНЕНИЕ СОСТОЯНИЯ!!
             return ReturnCode::SUCCESS;
         }
 //       IF ERROR
     } else if (getDataReturn == ErrorCode::THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB) {
-        dsThreadPool.enqueue(onErrorCallback, "THERE ARE TOO MANY SYSTEM SENSOR NAMES IN DB");
+        dsThreadPool->enqueue(onErrorCallback, "THERE ARE TOO MANY SYSTEM SENSOR NAMES IN DB");
         return ReturnCode::SUCCESS;
     } else if (getDataReturn == ErrorCode::THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB) {
-        dsThreadPool.enqueue(onErrorCallback, "THERE ARE NOT SUCH SYSTEM SENSOR NAMES IN DB");
+        dsThreadPool->enqueue(onErrorCallback, "THERE ARE NOT SUCH SYSTEM SENSOR NAMES IN DB");
         return ReturnCode::SUCCESS;
     } else if (getDataReturn == ErrorCode::EXCEPTION_ERROR) {
-        dsThreadPool.enqueue(onErrorCallback, "Error");
+        dsThreadPool->enqueue(onErrorCallback, "Error");
         return ReturnCode::SUCCESS;
     } else if (getDataReturn == ErrorCode::WRONG_SENSOR_TYPE) {
-        dsThreadPool.enqueue(onErrorCallback, "Wrong Sensor Type");
+        dsThreadPool->enqueue(onErrorCallback, "Wrong Sensor Type");
         return ReturnCode::SUCCESS;
     }
     return ReturnCode::SUCCESS;
@@ -188,39 +189,39 @@ IDataStorage::ReturnCode DataStorage::getState(const std::string& userSensorName
         auto getDataReturn = getData(systemSensorName, sensorType, state);
 //      IF SUCCESS OF getData
         if (getDataReturn == ErrorCode::SUCCESS) {
-            dsThreadPool.enqueue(onSuccessCallback, state);
+            dsThreadPool->enqueue(onSuccessCallback, state);
             return ReturnCode::SUCCESS;
         }
 //      IF ERROR of getData
         if (getDataReturn == ErrorCode::EXCEPTION_ERROR) {
-            dsThreadPool.enqueue(onErrorCallback, "Exception");
+            dsThreadPool->enqueue(onErrorCallback, "Exception");
             return ReturnCode::SUCCESS;
         }
         if (getDataReturn == ErrorCode::THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB) {
-            dsThreadPool.enqueue(onErrorCallback, "THERE ARE NOT SUCH SYSTEM SENSOR NAME IN DB");
+            dsThreadPool->enqueue(onErrorCallback, "THERE ARE NOT SUCH SYSTEM SENSOR NAME IN DB");
             return ReturnCode::SUCCESS;
         }
         if (getDataReturn == ErrorCode::THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB) {
-            dsThreadPool.enqueue(onErrorCallback, "THERE ARE TOO MANY SYSTEM SENSOR NAME IN DB");
+            dsThreadPool->enqueue(onErrorCallback, "THERE ARE TOO MANY SYSTEM SENSOR NAME IN DB");
             return ReturnCode::SUCCESS;
         }
         if (getDataReturn == ErrorCode::WRONG_SENSOR_TYPE) {
-            dsThreadPool.enqueue(onErrorCallback, "WRONG SENSOR TYPE");
+            dsThreadPool->enqueue(onErrorCallback, "WRONG SENSOR TYPE");
             return ReturnCode::SUCCESS;
 
         }
     }
 //     if Error of getSensorTypeAndSystemSensorName
     if (funcReturn == ErrorCode::EXCEPTION_ERROR) {
-        dsThreadPool.enqueue(onErrorCallback, "Exception");
+        dsThreadPool->enqueue(onErrorCallback, "Exception");
         return ReturnCode::SUCCESS;
     }
     if (funcReturn == ErrorCode::NO_SUCH_USER_SENSOR_NAME_IN_DB) {
-        dsThreadPool.enqueue(onErrorCallback, "NO SUCH USER SENSOR NAME IN DB");
+        dsThreadPool->enqueue(onErrorCallback, "NO SUCH USER SENSOR NAME IN DB");
         return ReturnCode::SUCCESS;
     }
     if (funcReturn == ErrorCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB) {
-        dsThreadPool.enqueue(onErrorCallback, "THERE ARE TOO MANY USER SENSOR NAMES IN DB");
+        dsThreadPool->enqueue(onErrorCallback, "THERE ARE TOO MANY USER SENSOR NAMES IN DB");
         return ReturnCode::SUCCESS;
     }
     return ReturnCode::SUCCESS;
@@ -301,7 +302,7 @@ IDataStorage::ReturnCode DataStorage::addSensor(const std::string& userSensorNam
             break;
         }
         if (inc > 0) {
-            dsThreadPool.enqueue(onErrorCallback, "Such user sensor name is already used.");
+            dsThreadPool->enqueue(onErrorCallback, "Such user sensor name is already used.");
             return ReturnCode::SUCH_US_NAME_IS_USED;
         }
         inc = 0;
@@ -311,7 +312,7 @@ IDataStorage::ReturnCode DataStorage::addSensor(const std::string& userSensorNam
             break;
         }
         if (inc > 0) {
-            dsThreadPool.enqueue(onErrorCallback, "Such system sensor name is already used.");
+            dsThreadPool->enqueue(onErrorCallback, "Such system sensor name is already used.");
             return ReturnCode::SUCH_SS_NAME_IS_USED;
         }
 
@@ -330,7 +331,7 @@ IDataStorage::ReturnCode DataStorage::addSensor(const std::string& userSensorNam
             auto tabBinaryType = DataDB::BinaryType();
             db->operator()(insert_into(tabBinaryType).set(tabBinaryType.systemSensorName = systemSensorName, tabBinaryType.type = kindOfSensor, tabBinaryType.FAId = FAid,
                                                                                                                                     tabBinaryType.state = startingState));
-            dsThreadPool.enqueue(onSuccessCallback, "Sensor added");
+            dsThreadPool->enqueue(onSuccessCallback, "Sensor added");
             return ReturnCode::SUCCESS;
         }
 
@@ -338,7 +339,7 @@ IDataStorage::ReturnCode DataStorage::addSensor(const std::string& userSensorNam
             auto tabMonitorType = DataDB::MonitorType();
             db->operator()(insert_into(tabMonitorType).set(tabMonitorType.systemSensorName = systemSensorName, tabMonitorType.type = kindOfSensor, tabMonitorType.FAId = FAid,
                                                           tabMonitorType.state = startingState));
-            dsThreadPool.enqueue(onSuccessCallback, "Sensor added");
+            dsThreadPool->enqueue(onSuccessCallback, "Sensor added");
             return ReturnCode::SUCCESS;
         }
 
@@ -346,11 +347,11 @@ IDataStorage::ReturnCode DataStorage::addSensor(const std::string& userSensorNam
             auto tabManyStatesType = DataDB::BinaryType();
             db->operator()(insert_into(tabManyStatesType).set(tabManyStatesType.systemSensorName = systemSensorName, tabManyStatesType.type = kindOfSensor, tabManyStatesType.FAId = FAid,
                                                           tabManyStatesType.state = startingState));
-            dsThreadPool.enqueue(onSuccessCallback, "Sensor added");
+            dsThreadPool->enqueue(onSuccessCallback, "Sensor added");
             return ReturnCode::SUCCESS;
         }
     } catch (std::exception& e) {
-        dsThreadPool.enqueue(onErrorCallback, e.what());
+        dsThreadPool->enqueue(onErrorCallback, e.what());
         return ReturnCode::EXCEPTION_ERROR;
     }
     return ReturnCode::SUCCESS;
@@ -376,14 +377,14 @@ IDataStorage::ReturnCode DataStorage::removeSensor(const std::string& systemSens
                 sensorType = row.sensorType;
             }
             if (inc == 0) {
-                dsThreadPool.enqueue(onErrorCallback, "NO_SUCH_SS_NAME");
+                dsThreadPool->enqueue(onErrorCallback, "NO_SUCH_SS_NAME");
                 return ReturnCode::NO_SUCH_SS_NAME;
             } else if (inc > 1) {
-                dsThreadPool.enqueue(onErrorCallback, "TOO MANY SS NAMES");
+                dsThreadPool->enqueue(onErrorCallback, "TOO MANY SS NAMES");
                 return ReturnCode::TOO_MANY_SS_NAMES;
             }
     } catch (std::exception& e) {
-        dsThreadPool.enqueue(onErrorCallback, "EXCEPTION");
+        dsThreadPool->enqueue(onErrorCallback, "EXCEPTION");
         return ReturnCode::EXCEPTION_ERROR;
     }
 
@@ -400,14 +401,14 @@ IDataStorage::ReturnCode DataStorage::removeSensor(const std::string& systemSens
             auto tabMonitorType = DataDB::MonitorType();
             db->operator()(remove_from(tabMonitorType).where(tabMonitorType.systemSensorName == systemSensorName));
         } else {
-            dsThreadPool.enqueue(onErrorCallback, "No such sensor type");
+            dsThreadPool->enqueue(onErrorCallback, "No such sensor type");
             return ReturnCode::WRONG_SENSOR_TYPE;
         }
     } catch (std::exception& e) {
-        dsThreadPool.enqueue(onErrorCallback, e.what());
+        dsThreadPool->enqueue(onErrorCallback, e.what());
         return ReturnCode::EXCEPTION_ERROR;
     }
-    dsThreadPool.enqueue(onSuccessCallback, "remove - success");
+    dsThreadPool->enqueue(onSuccessCallback, "remove - success");
     return ReturnCode::SUCCESS;
 
 

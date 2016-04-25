@@ -11,9 +11,6 @@
 #include <sqlpp11/sqlpp11.h>
 #include <sqlpp11/mysql/mysql.h>
 #include "../../external/ThreadPool/ThreadPool.h"
-
-static ThreadPool dsThreadPool(4);
-
 /*
  * @brief Class IDataStorage is an interface between user or client and Sql DataBase.
  * It's pure virtual class.
@@ -173,6 +170,7 @@ protected:
      */
     std::shared_ptr<sqlpp::mysql::connection> db;
     SensorType sensorTypeConstants;
+    std::unique_ptr<ThreadPool>  dsThreadPool;
 
 };
 
