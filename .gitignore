@@ -1,3 +1,4 @@
 .idea/
 main.cpp
 **/main.cpp
+./SHouseServerComponent/DataStoragePacket/trash.cpp

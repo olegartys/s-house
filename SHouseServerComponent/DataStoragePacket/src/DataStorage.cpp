@@ -95,81 +95,7 @@ IDataStorage::ReturnCode DataStorage::setState(const std::string &systemSensorNa
 }
 
 
-//IDataStorage::ReturnCode DataStorage::setStateByUserQuery(const std::string &userSensorName,
-//                                                          const std::string &newState,
-//                                                          OnStateChangedCallbackType onStateChangedCallback,
-//                                                          OnOldStateCallbackType onOldStateCallback,
-//                                                          OnErrorCallbackType onErrorCallback)
-//{
-//    if (isConnected == false) {
-//        return ReturnCode::WRONG_CONFIG;
-//    }
-//
-////    Check that callbacks were transferred.
-//
-//
-//    if (onStateChangedCallback== nullptr || onOldStateCallback == nullptr || onErrorCallback == nullptr) {
-//
-//                return ReturnCode::NULLPTR_CALLBACKS;
-//    }
-//
-////     Create variable of MainTable.
-//    const auto  tabMainTable = DataDB::MainTable();
-//
-//    std::string systemSensorName, sensorType;
-////    get System Name and Type of sensor.
-//    auto getSensTypeAndSysSensNameReturn = getSensorTypeAndSystemSensorName(userSensorName, systemSensorName, sensorType);
-//
-////    Error processing
-//    if (getSensTypeAndSysSensNameReturn == ErrorCode::EXCEPTION_ERROR) {
-//        onErrorCallback("EXCEPTION");
-//        return ReturnCode::SUCCESS;
-//    }
-//
-//    if (getSensTypeAndSysSensNameReturn == ErrorCode::NO_SUCH_USER_SENSOR_NAME_IN_DB) {
-//        onErrorCallback("NO SUCH USER SENSOR NAME IN DATABASE");
-//        return ReturnCode::SUCCESS;
-//    }
-//    if (getSensTypeAndSysSensNameReturn == ErrorCode::THERE_ARE_TOO_MANY_USER_SENSOR_NAMES_IN_DB) {
-//        onErrorCallback("THERE ARE TOO MANY USER SENSOR NAMES IN DATABASE");
-//        return ReturnCode::SUCCESS;
-//    }
-//    //  SUCCESS processing
-//    if (getSensTypeAndSysSensNameReturn == ErrorCode::SUCCESS) {
-//        // ДАЛЕЕ 3 ИСХОДА! 1 - ОШИБКА, 2 - СОСТОЯНИЕ ТАКОЕ ЖЕ, 3 - СОСТОЯНИЕ ОТЛИЧАЕТСЯ.
-//        std::string currentState;
-//        if (sensorType == sensorTypeConstants.monitorType) {
-//            onErrorCallback("CAN'T CHANGE MONITOR TYPE");
-//            return ReturnCode::SUCCESS;
-//        }
-////      Get current sensor's state
-//        auto getDataReturn = getData(systemSensorName, sensorType, currentState);
-////      IF SUCCESS
-//        if (getDataReturn == ErrorCode::SUCCESS) {
-//            if (currentState == newState) {
-////                CОСТОЯНИЕ ТАКОЕ ЖЕ
-//                onOldStateCallback();
-//                return ReturnCode::SUCCESS;
-//            } else {
-////                СОСТОЯНИЕ ИЗМЕНИЛОСЬ
-////             ИЗМЕНЕНИЕ СОСТОЯНИЯ!!
-//                onStateChangedCallback();
-//                return ReturnCode::SUCCESS;
-//            }
-////       IF ERROR
-//        } else if (getDataReturn == ErrorCode::THERE_ARE_TOO_MANY_SYSTEM_SENSOR_NAMES_IN_DB) {
-//            onErrorCallback("THERE ARE TOO MANY SYSTEM SENSOR NAMES IN DB");
-//            return ReturnCode::SUCCESS;
-//        } else if (getDataReturn == ErrorCode::THERE_ARE_NOT_SUCH_SYSTEM_SENSOR_NAMES_IN_DB) {
-//            onErrorCallback("THERE ARE NOT SUCH SYSTEM SENSOR NAMES IN DB");
-//            return ReturnCode::SUCCESS;
-//        } else if (getDataReturn == ErrorCode::EXCEPTION_ERROR) {
-//            onErrorCallback("Error");
-//            return ReturnCode::SUCCESS;
-//        }
-//    }
-//    return ReturnCode::SUCCESS;
-//}
+
 
 IDataStorage::ReturnCode DataStorage::getState(const std::string& userSensorName, OnSuccessCallbackType onSuccessCallback,
                                                OnErrorCallbackType onErrorCallback)
@@ -228,59 +154,7 @@ IDataStorage::ReturnCode DataStorage::getState(const std::string& userSensorName
 }
 
 // Сейчас Данный метод очень короткий и простой, но не как не проверяет то что данные введены верно!.
-//IDataStorage::ReturnCode DataStorage::setStateByClientQuery(const std::string& systemSensorName,
-//                                                            const std::string& sensorType,
-//                                                            const std::string& newState,
-//                                                            OnSuccessCallbackType onSuccessCallback,
-//                                                            OnErrorCallbackType onErrorCallback)
-//{
-//    if (isConnected == false) {
-//        return ReturnCode::WRONG_CONFIG;
-//    }
-//
-//    if (onSuccessCallback == nullptr || onErrorCallback == nullptr) {
-//        return ReturnCode::NULLPTR_CALLBACKS;
-//    }
-//
-//    try {
-//
-//        std::string exec;
-//        exec = "update " + sensorType + " set state='" + newState + "' where systemSensorName='" + systemSensorName + "'";
-//        db->execute(exec);
-//        return ReturnCode::SUCCESS;
-////        if (sensorType == sensorTypeConstants.manyStatesType) {
-////            auto tabManyStatesType = DataDB::ManyStatesType();
-////            db->operator()(update(tabManyStatesType).set(tabManyStatesType.state = newState)
-////                                   .where(tabManyStatesType.systemSensorName == systemSensorName));
-////            onSuccessCallback(nullptr);
-////            return ReturnCode::SUCCESS;
-////        }
-//
-////        db->execute("UPDATE BinaryType SET state='off' WHERE (BinaryType.systemSensorName='light1')");
-//
-////        if (sensorType == sensorTypeConstants.binaryType) {
-////            auto tabBinaryType = DataDB::BinaryType();
-//////            db->update()
-////            db->operator()(sqlpp::update(tabBinaryType).set(tabBinaryType.state = "ON")
-////                                   .where(tabBinaryType.systemSensorName =="light1"));
-////            onSuccessCallback(nullptr);
-////            return ReturnCode::SUCCESS;
-////        }
-//
-////        if (sensorType == sensorTypeConstants.monitorType) {
-////            auto tabMonitorType = DataDB::MonitorType();
-////            db->operator()(update(tabMonitorType).set(tabMonitorType.state = newState)
-////                                   .where(tabMonitorType.systemSensorName == systemSensorName));
-////            onSuccessCallback(nullptr);
-////            return ReturnCode::SUCCESS;
-////        }
-//        // Дальше дергается колбэк ошибки
-//    } catch(std::exception& e) {
-//        onErrorCallback(e.what());
-//    }
-//    onErrorCallback("error");
-//    return ReturnCode::SUCCESS;
-//}
+
 
 IDataStorage::ReturnCode DataStorage::addSensor(const std::string& userSensorName, const std::string& systemSensorName,
                                                 const std::string& sensorType, const std::string& FAid, const std::string& kindOfSensor,
@@ -410,9 +284,6 @@ IDataStorage::ReturnCode DataStorage::removeSensor(const std::string& systemSens
     }
     dsThreadPool->enqueue(onSuccessCallback, "remove - success");
     return ReturnCode::SUCCESS;
-
-
-//    db(remove_from(tab).where(tab.alpha == tab.alpha + 3));
 
 }
 
@@ -617,7 +488,4 @@ IDataStorage::ErrorCode DataStorage::getData(const std::string& systemSensorName
 }
 
 
-
-
-//TODO ПЕРЕДЕЛАТЬ setStateByClientQuery, т.к. update не работает. попробовать использовать execute.
 //TODO Подумать, что передавать как дату в Success

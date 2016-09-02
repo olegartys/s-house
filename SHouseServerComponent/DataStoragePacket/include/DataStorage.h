@@ -9,7 +9,7 @@
 #include "IDataStorage.h"
 #include "DataDB.h"
 
-class DataStorage : public IDataStorage {
+class DataStorage final : public IDataStorage {
 public:
     DataStorage() = default;
 
@@ -39,9 +39,9 @@ public:
     ReturnCode addSensor(const std::string& userSensorName, const std::string& systemSensorName,
                          const std::string& sensorType, const std::string& FAid, const std::string& kindOfSensor,
                          const std::string& startingState,
-                         OnSuccessCallbackType, OnErrorCallbackType);
+                         OnSuccessCallbackType, OnErrorCallbackType) override;
 
-    ReturnCode removeSensor(const std::string& systemSensorName, OnSuccessCallbackType, OnErrorCallbackType);
+    ReturnCode removeSensor(const std::string& systemSensorName, OnSuccessCallbackType, OnErrorCallbackType) override;
     /*
      *
      */
