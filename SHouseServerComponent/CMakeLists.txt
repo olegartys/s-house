@@ -4,9 +4,16 @@ project(SHouseServerComponent)
 # Set compilaton flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC")
 
-# Link with libraries
-link_directories(/usr/lib)
-link_directories(/usr/local/lib)
+# Directory with sqlpp11-connector-mysql lib
+link_directories(external/sqlpp11/sqlpp11-connector-mysql/src)
+
+#-----------------------------
+# Build external packages
+add_subdirectory(external/sqlpp11/sqlpp11-connector-mysql)
+add_subdirectory(external/sqlpp11/sqlpp11)
+
+#-----------------------------
+# Build local packages
 
 # QueryAnalyzingPacket adding.
 add_subdirectory(QueryAnalyzingPacket)

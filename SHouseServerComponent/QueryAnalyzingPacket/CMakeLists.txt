@@ -11,3 +11,8 @@ target_include_directories(QueryAnalyzingPacket PUBLIC include/)
 
 # Link it with MessagePacket library
 target_link_libraries(QueryAnalyzingPacket LINK_PUBLIC MessagePacket)
+
+# FIXME: this shouldn't be here
+target_include_directories(QueryAnalyzingPacket PUBLIC ../external/sqlpp11/sqlpp11/include/)
+target_include_directories(QueryAnalyzingPacket PUBLIC ../external/sqlpp11/date/)
+target_include_directories(QueryAnalyzingPacket PUBLIC ../external/sqlpp11/sqlpp11-connector-mysql/include)

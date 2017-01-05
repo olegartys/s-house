@@ -2,8 +2,7 @@
 // Created by olegartys on 08.04.16.
 //
 
-#include <json/value.h>
-#include <json/reader.h>
+#include <json/json.h>
 #include "Response.h"
 
 std::string Response::serialize(bool styled) const {
