@@ -4,10 +4,14 @@
 
 #ifndef SHOUSEDATASTORAGE_DATASTORAGE_H
 #define SHOUSEDATASTORAGE_DATASTORAGE_H
-
+// This class depends on library SQLPP11, which in turn depends on the library MYSQL-CLIENT.
 
 #include "IDataStorage.h"
 #include "DataDB.h"
+
+#include <sqlpp11/sqlpp11.h>
+#include <sqlpp11/mysql/mysql.h>
+#include "../../external/ThreadPool/ThreadPool.h"
 
 class DataStorage final : public IDataStorage {
 public:
@@ -74,6 +78,16 @@ private:
 
     bool isConnected = false;
 
+    /*
+     * @brief Shared_ptr on config.
+     */
+    const std::shared_ptr<sqlpp::mysql::connection_config> config = std::make_shared<sqlpp::mysql::connection_config>();
+    /*
+     * @brief Shared_ptr on DB.
+     */
+    std::shared_ptr<sqlpp::mysql::connection> db;
+    SensorType sensorTypeConstants;
+    std::unique_ptr<ThreadPool>  dsThreadPool;
 };
 
 

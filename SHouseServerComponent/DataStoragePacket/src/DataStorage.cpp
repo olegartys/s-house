@@ -3,7 +3,6 @@
 //
 
 #include "DataStorage.h"
-#include <iostream>
 
 
 IDataStorage::ReturnCode DataStorage::connect(const std::string &userName, const std::string &password,
