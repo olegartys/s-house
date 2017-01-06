@@ -9,6 +9,10 @@
 #include "IDataStorage.h"
 #include "DataDB.h"
 
+#include <sqlpp11/sqlpp11.h>
+#include <sqlpp11/mysql/mysql.h>
+#include "../../external/ThreadPool/ThreadPool.h"
+
 class DataStorage final : public IDataStorage {
 public:
     DataStorage() = default;
@@ -73,6 +77,17 @@ private:
                                                std::string& systemSensorName, std::string& sensorType);
 
     bool isConnected = false;
+
+    /*
+     * @brief Shared_ptr on config.
+     */
+    const std::shared_ptr<sqlpp::mysql::connection_config> config = std::make_shared<sqlpp::mysql::connection_config>();
+    /*
+     * @brief Shared_ptr on DB.
+     */
+    std::shared_ptr<sqlpp::mysql::connection> db;
+    SensorType sensorTypeConstants;
+    std::unique_ptr<ThreadPool>  dsThreadPool;
 
 };
 

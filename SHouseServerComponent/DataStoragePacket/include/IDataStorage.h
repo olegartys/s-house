@@ -8,9 +8,7 @@
 #include <string>
 #include <memory>
 
-#include <sqlpp11/sqlpp11.h>
-#include <sqlpp11/mysql/mysql.h>
-#include "../../external/ThreadPool/ThreadPool.h"
+
 /*
  * @brief Class IDataStorage is an interface between user or client and Sql DataBase.
  * It's pure virtual class.
@@ -161,16 +159,7 @@ protected:
     };
 
     //virtual int getData(std::string systemSensorName, std::string& ) =0;
-    /*
-     * @brief Shared_ptr on config.
-     */
-    const std::shared_ptr<sqlpp::mysql::connection_config> config = std::make_shared<sqlpp::mysql::connection_config>();
-    /*
-     * @brief Shared_ptr on DB.
-     */
-    std::shared_ptr<sqlpp::mysql::connection> db;
-    SensorType sensorTypeConstants;
-    std::unique_ptr<ThreadPool>  dsThreadPool;
+
 
 };
 
