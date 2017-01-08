@@ -1,7 +1,7 @@
 project(CommonPacket)
 
 # Set the source files
-set(SOURCE_FILES src/Utils.cpp)
+set(SOURCE_FILES src/Utils.cpp include/Log.h include/LogImpl.h)
 
 # Create an library for QueryAnalyzingPacket
 add_library(CommonPacket SHARED ${SOURCE_FILES})
